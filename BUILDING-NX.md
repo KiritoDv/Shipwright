@@ -55,6 +55,8 @@ cp external/StormLib/build/libstorm.a external
 cp /usr/local/lib/libGLEW.a external
 
 cd soh
+# Fix "detected dubious ownership in repository at '/soh'" error 
+git config --global --add safe.directory /soh
 # Extract the assets/Compile the exporter/Run the exporter
 make setup -j$(nproc) OPTFLAGS=-O2 DEBUG=0
 # Compile the code
