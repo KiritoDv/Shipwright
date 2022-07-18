@@ -39,7 +39,7 @@ devkitPro: switch-dev, switch-portlibs
 git clone -b znx https://github.com/KiritoDv/Shipwright.git
 cd Shipwright
 # Copy the baserom to the OTRExporter folder
-cp <path to your ROM> OTRExporter
+cp <path to your ROM> ./OTRExporter/rom.z64
 # Build the docker image
 sudo docker build . -t soh
 # Run the docker image with the working directory mounted to /soh
