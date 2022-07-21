@@ -162,7 +162,7 @@ pipeline {
                         timeout(time: 20)
                     }
                     agent {
-                        label "SoH-Switch-Builders"
+                        label "SoH-Linux-Builders"
                     }
                     steps {
                         checkout([
