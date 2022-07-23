@@ -31,6 +31,9 @@
     <Filter Include="Source Files\Globals">
       <UniqueIdentifier>{c0f07350-c627-444e-9f66-23e19407ad9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Config">
+      <UniqueIdentifier>{9cf4833f-e90c-4a9d-8747-d47cde657beb}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Resources\Files">
       <UniqueIdentifier>{2aa34c3b-6148-480f-a4fc-19c4e0f8c822}</UniqueIdentifier>
     </Filter>
@@ -73,12 +76,6 @@
     <Filter Include="Source Files\CustomImpl\Utils">
       <UniqueIdentifier>{0dca2d94-45ba-4916-b03a-1dd5f949114c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ModManager">
-      <UniqueIdentifier>{8e970531-d0cd-4c29-9800-a7e6edc92036}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ModManager\ModModule">
-      <UniqueIdentifier>{05f273a3-f147-430e-9853-aeef59e6288d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\CustomImpl\Hooks">
       <UniqueIdentifier>{cc8de11b-7305-4482-853f-7f0f843eef28}</UniqueIdentifier>
     </Filter>
@@ -88,17 +85,11 @@
     <Filter Include="Source Files\CustomImpl\Overlay">
       <UniqueIdentifier>{3285ab8a-06d8-4dac-9af9-efb2a9723ab1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Lib\dr_libs">
-      <UniqueIdentifier>{db6e02cc-fc4c-4138-8219-1d281ad93ec2}</UniqueIdentifier>
+    <Filter Include="Source Files\Lib\Textures">
+      <UniqueIdentifier>{853d11de-3ffb-42bd-b1b6-dd453527a83a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Lib\nlohmann">
-      <UniqueIdentifier>{2be7c90f-ba21-455d-8a11-6f99452be15c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Lib\Mercury">
-      <UniqueIdentifier>{7e415dd2-403b-4d4d-b4f2-3e311f91db19}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Controller\InputEditor">
-      <UniqueIdentifier>{010dc29b-d1f6-4793-a4e7-4156aa4fcdd6}</UniqueIdentifier>
+    <Filter Include="Source Files\Lib\Textures\Loaders">
+      <UniqueIdentifier>{89726db4-c46b-4850-b002-aa2972123143}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +161,9 @@
     </ClCompile>
     <ClCompile Include="MemoryPack.cpp">
       <Filter>Source Files\Controller\Attachment</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigFile.cpp">
+      <Filter>Source Files\Config</Filter>
     </ClCompile>
     <ClCompile Include="CollisionHeader.cpp">
       <Filter>Source Files\Resources\Files</Filter>
@@ -303,10 +297,10 @@
     <ClCompile Include="Lib\ImGui\backends\imgui_impl_sdl.cpp">
       <Filter>Source Files\Lib\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiImpl.cpp">
+    <ClCompile Include="SohImGuiImpl.cpp">
       <Filter>Source Files\CustomImpl</Filter>
     </ClCompile>
-    <ClCompile Include="Console.cpp">
+    <ClCompile Include="SohConsole.cpp">
       <Filter>Source Files\CustomImpl</Filter>
     </ClCompile>
     <ClCompile Include="Lib\ImGui\backends\imgui_impl_dx11.cpp">
@@ -333,13 +327,7 @@
     <ClCompile Include="Cvar.cpp">
       <Filter>Source Files\Globals</Filter>
     </ClCompile>
-    <ClCompile Include="TextureMod.cpp">
-      <Filter>Source Files\ModManager\ModModule</Filter>
-    </ClCompile>
-    <ClCompile Include="ModManager.cpp">
-      <Filter>Source Files\ModManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Hooks.cpp">
+    <ClCompile Include="SohHooks.cpp">
       <Filter>Source Files\CustomImpl\Hooks</Filter>
     </ClCompile>
     <ClCompile Include="luslog.cpp">
@@ -357,14 +345,14 @@
     <ClCompile Include="Factories\AudioFactory.cpp">
       <Filter>Source Files\Resources\Factories</Filter>
     </ClCompile>
-    <ClCompile Include="InputEditor.cpp">
-      <Filter>Source Files\Controller\InputEditor</Filter>
+    <ClCompile Include="TexLoader.cpp">
+      <Filter>Source Files\Lib\Textures</Filter>
     </ClCompile>
-    <ClCompile Include="ControlDeck.cpp">
-      <Filter>Source Files\Controller</Filter>
+    <ClCompile Include="DefaultTexLoader.cpp">
+      <Filter>Source Files\Lib\Textures\Loaders</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Mercury\Mercury.cpp">
-      <Filter>Source Files\Lib\Mercury</Filter>
+    <ClCompile Include="DDSTexLoader.cpp">
+      <Filter>Source Files\Lib\Textures\Loaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -397,6 +385,9 @@
     </ClInclude>
     <ClInclude Include="MemoryPack.h">
       <Filter>Source Files\Controller\Attachment</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigFile.h">
+      <Filter>Source Files\Config</Filter>
     </ClInclude>
     <ClInclude Include="ResourceMgr.h">
       <Filter>Source Files\Resources</Filter>
@@ -593,10 +584,10 @@
     <ClInclude Include="Lib\ImGui\backends\imgui_impl_sdl.h">
       <Filter>Source Files\Lib\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGuiImpl.h">
+    <ClInclude Include="SohImGuiImpl.h">
       <Filter>Source Files\CustomImpl</Filter>
     </ClInclude>
-    <ClInclude Include="Console.h">
+    <ClInclude Include="SohConsole.h">
       <Filter>Source Files\CustomImpl</Filter>
     </ClInclude>
     <ClInclude Include="Lib\ImGui\backends\imgui_impl_dx11.h">
@@ -632,16 +623,7 @@
     <ClInclude Include="Lib\stb\stb_image_write.h">
       <Filter>Source Files\Lib\stb</Filter>
     </ClInclude>
-    <ClInclude Include="TextureMod.h">
-      <Filter>Source Files\ModManager\ModModule</Filter>
-    </ClInclude>
-    <ClInclude Include="ModManager.h">
-      <Filter>Source Files\ModManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ModModule.h">
-      <Filter>Source Files\ModManager\ModModule</Filter>
-    </ClInclude>
-    <ClInclude Include="Hooks.h">
+    <ClInclude Include="SohHooks.h">
       <Filter>Source Files\CustomImpl\Hooks</Filter>
     </ClInclude>
     <ClInclude Include="luslog.h">
@@ -662,26 +644,17 @@
     <ClInclude Include="Factories\AudioFactory.h">
       <Filter>Header Files\Resources\Factories</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\dr_libs\mp3.h">
-      <Filter>Source Files\Lib\dr_libs</Filter>
+    <ClInclude Include="TexLoader.h">
+      <Filter>Source Files\Lib\Textures</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\dr_libs\wav.h">
-      <Filter>Source Files\Lib\dr_libs</Filter>
+    <ClInclude Include="TexIOLoader.h">
+      <Filter>Source Files\Lib\Textures\Loaders</Filter>
     </ClInclude>
-    <ClInclude Include="InputEditor.h">
-      <Filter>Source Files\Controller\InputEditor</Filter>
+    <ClInclude Include="DefaultTexLoader.h">
+      <Filter>Source Files\Lib\Textures\Loaders</Filter>
     </ClInclude>
-    <ClInclude Include="ControlDeck.h">
-      <Filter>Source Files\Controller</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\nlohmann\json.hpp">
-      <Filter>Source Files\Lib\nlohmann</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Mercury\Mercury.h">
-      <Filter>Source Files\Lib\Mercury</Filter>
-    </ClInclude>
-    <ClInclude Include="VirtualController.h">
-      <Filter>Source Files\Controller</Filter>
+    <ClInclude Include="DDSTexLoader.h">
+      <Filter>Source Files\Lib\Textures\Loaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

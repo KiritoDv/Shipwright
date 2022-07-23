@@ -16,7 +16,6 @@
 #include "Lib/ImGui/imgui_internal.h"
 #include "GlobalCtx2.h"
 #include "ResourceMgr.h"
-#include "TextureMod.h"
 #include "Window.h"
 #include "Cvar.h"
 #include "GameOverlay.h"
@@ -26,6 +25,7 @@
 #include "Lib/Fast3D/gfx_rendering_api.h"
 #include "Lib/spdlog/include/spdlog/common.h"
 #include "Utils/StringHelper.h"
+#include "TexLoader.h"
 
 #ifdef ENABLE_OPENGL
 #include "Lib/ImGui/backends/imgui_impl_opengl3.h"
@@ -69,6 +69,40 @@ namespace SohImGui {
     bool p_open = false;
     bool needs_save = false;
     int lastBackendID = 0;
+    ImVec4 hearts_colors;
+    ImVec4 hearts_dd_colors;
+    ImVec4 a_btn_colors;
+    ImVec4 b_btn_colors;
+    ImVec4 c_btn_colors;
+    ImVec4 start_btn_colors;
+    ImVec4 magic_border_colors;
+    ImVec4 magic_remaining_colors;
+    ImVec4 magic_use_colors;
+    ImVec4 minimap_colors;
+    ImVec4 rupee_colors;
+    ImVec4 smolekey_colors;
+    ImVec4 fileselect_colors;
+    ImVec4 fileselect_text_colors;
+    ImVec4 kokiri_col;
+    ImVec4 goron_col;
+    ImVec4 zora_col;
+    ImVec4 navi_idle_i_col;
+    ImVec4 navi_idle_o_col;
+    ImVec4 navi_npc_i_col;
+    ImVec4 navi_npc_o_col;
+    ImVec4 navi_enemy_i_col;
+    ImVec4 navi_enemy_o_col;
+    ImVec4 navi_prop_i_col;
+    ImVec4 navi_prop_o_col;
+
+    const char* RainbowColorCvarList[] = {
+    //This is the list of possible CVars that has rainbow effect.
+        "gTunic_Kokiri_","gTunic_Goron_","gTunic_Zora_",
+        "gCCHeartsPrim","gDDCCHeartsPrim",
+        "gCCABtnPrim","gCCBBtnPrim","gCCCBtnPrim","gCCStartBtnPrim",
+        "gCCMagicBorderPrim","gCCMagicPrim","gCCMagicUsePrim",
+        "gCCMinimapPrim","gCCRupeePrim","gCCKeysPrim"
+    };
 
     const char* filters[3] = {
         "Three-Point",
@@ -387,6 +421,7 @@ namespace SohImGui {
         CVar_SetS32("gNewFileDropped", 0);
         CVar_SetString("gDroppedFile", "None");
         // Game::SaveSettings();
+        TexLoader::Init();
     }
 
     void Update(EventImpl event) {
@@ -710,6 +745,7 @@ namespace SohImGui {
         RandomizeColor(cvarName, &ColorRGBA);
         if (allow_rainbow) {
             if (ImGui::GetContentRegionAvail().x > 185) {
+
                 ImGui::SameLine();
             }
             RainbowColor(cvarName, &ColorRGBA);
@@ -853,6 +889,37 @@ namespace SohImGui {
 
                 EnhancementSliderFloat("Input Scale: %.1f", "##Input", "gInputScale", 1.0f, 3.0f, "", 1.0f, false);
                 Tooltip("Sets the on screen size of the displayed inputs from the Show Inputs setting");
+
+		ImGui::Separator();
+
+                for (const auto& [i, controllers] : Ship::Window::Controllers)
+                {
+                    bool hasPad = std::find_if(controllers.begin(), controllers.end(), [](const auto& c) {
+                        return c->HasPadConf() && c->Connected();
+                        }) != controllers.end();
+
+                        if (!hasPad) continue;
+
+                        auto menuLabel = "Controller " + std::to_string(i + 1);
+                        if (ImGui::BeginMenu(menuLabel.c_str()))
+                        {
+                            EnhancementSliderFloat("Gyro Sensitivity: %d %%", "##GYROSCOPE", StringHelper::Sprintf("gCont%i_GyroSensitivity", i).c_str(), 0.0f, 1.0f, "", 1.0f, true);
+
+                            if (ImGui::Button("Recalibrate Gyro"))
+                            {
+                                CVar_SetFloat(StringHelper::Sprintf("gCont%i_GyroDriftX", i).c_str(), 0);
+                                CVar_SetFloat(StringHelper::Sprintf("gCont%i_GyroDriftY", i).c_str(), 0);
+                                needs_save = true;
+                            }
+
+                            ImGui::Separator();
+
+                            EnhancementSliderFloat("Rumble Strength: %d %%", "##RUMBLE", StringHelper::Sprintf("gCont%i_RumbleStrength", i).c_str(), 0.0f, 1.0f, "", 1.0f, true);
+
+                            ImGui::EndMenu();
+                        }
+                        ImGui::Separator();
+                }
 
                 ImGui::EndMenu();
             }
