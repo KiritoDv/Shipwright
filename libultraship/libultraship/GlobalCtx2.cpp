@@ -7,7 +7,6 @@
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/sohconsole_sink.h"
-#include "ModManager.h"
 #ifdef __APPLE__
 #include "OSXFolderManager.h"
 #endif

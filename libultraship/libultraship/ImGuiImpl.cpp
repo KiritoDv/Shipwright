@@ -12,6 +12,8 @@
 #include "GameSettings.h"
 #include "Console.h"
 #include "Hooks.h"
+#include "TexLoader.h"
+
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "Lib/ImGui/imgui_internal.h"
 #include "GlobalCtx2.h"
@@ -25,7 +27,7 @@
 #include "Lib/Fast3D/gfx_rendering_api.h"
 #include "Lib/spdlog/include/spdlog/common.h"
 #include "Utils/StringHelper.h"
-#include "TexLoader.h"
+
 
 #ifdef ENABLE_OPENGL
 #include "Lib/ImGui/backends/imgui_impl_opengl3.h"
@@ -890,37 +892,6 @@ namespace SohImGui {
                 EnhancementSliderFloat("Input Scale: %.1f", "##Input", "gInputScale", 1.0f, 3.0f, "", 1.0f, false);
                 Tooltip("Sets the on screen size of the displayed inputs from the Show Inputs setting");
 
-		ImGui::Separator();
-
-                for (const auto& [i, controllers] : Ship::Window::Controllers)
-                {
-                    bool hasPad = std::find_if(controllers.begin(), controllers.end(), [](const auto& c) {
-                        return c->HasPadConf() && c->Connected();
-                        }) != controllers.end();
-
-                        if (!hasPad) continue;
-
-                        auto menuLabel = "Controller " + std::to_string(i + 1);
-                        if (ImGui::BeginMenu(menuLabel.c_str()))
-                        {
-                            EnhancementSliderFloat("Gyro Sensitivity: %d %%", "##GYROSCOPE", StringHelper::Sprintf("gCont%i_GyroSensitivity", i).c_str(), 0.0f, 1.0f, "", 1.0f, true);
-
-                            if (ImGui::Button("Recalibrate Gyro"))
-                            {
-                                CVar_SetFloat(StringHelper::Sprintf("gCont%i_GyroDriftX", i).c_str(), 0);
-                                CVar_SetFloat(StringHelper::Sprintf("gCont%i_GyroDriftY", i).c_str(), 0);
-                                needs_save = true;
-                            }
-
-                            ImGui::Separator();
-
-                            EnhancementSliderFloat("Rumble Strength: %d %%", "##RUMBLE", StringHelper::Sprintf("gCont%i_RumbleStrength", i).c_str(), 0.0f, 1.0f, "", 1.0f, true);
-
-                            ImGui::EndMenu();
-                        }
-                        ImGui::Separator();
-                }
-
                 ImGui::EndMenu();
             }
 
@@ -1052,33 +1023,33 @@ namespace SohImGui {
                         ImGui::Text("Damage Multiplier");
                         EnhancementCombobox("gDamageMul", powers, 9, 0);
                         Tooltip("Modifies all sources of damage not affected by other sliders\n\
-2x: Can survive all common attacks from the start of the game\n\
-4x: Dies in 1 hit to any substantial attack from the start of the game\n\
-8x: Can only survive trivial damage from the start of the game\n\
-16x: Can survive all common attacks with max health without double defense\n\
-32x: Can survive all common attacks with max health and double defense\n\
-64x: Can survive trivial damage with max health without double defense\n\
-128x: Can survive trivial damage with max health and double defense\n\
-256x: Cannot survive damage");
+                        2x: Can survive all common attacks from the start of the game\n\
+                        4x: Dies in 1 hit to any substantial attack from the start of the game\n\
+                        8x: Can only survive trivial damage from the start of the game\n\
+                        16x: Can survive all common attacks with max health without double defense\n\
+                        32x: Can survive all common attacks with max health and double defense\n\
+                        64x: Can survive trivial damage with max health without double defense\n\
+                        128x: Can survive trivial damage with max health and double defense\n\
+                        256x: Cannot survive damage");
                         ImGui::Text("Fall Damage Multiplier");
                         EnhancementCombobox("gFallDamageMul", powers, 8, 0);
                         Tooltip("Modifies all fall damage\n\
-2x: Can survive all fall damage from the start of the game\n\
-4x: Can only survive short fall damage from the start of the game\n\
-8x: Cannot survive any fall damage from the start of the game\n\
-16x: Can survive all fall damage with max health without double defense\n\
-32x: Can survive all fall damage with max health and double defense\n\
-64x: Can survive short fall damage with double defense\n\
-128x: Cannot survive fall damage");
+                        2x: Can survive all fall damage from the start of the game\n\
+                        4x: Can only survive short fall damage from the start of the game\n\
+                        8x: Cannot survive any fall damage from the start of the game\n\
+                        16x: Can survive all fall damage with max health without double defense\n\
+                        32x: Can survive all fall damage with max health and double defense\n\
+                        64x: Can survive short fall damage with double defense\n\
+                        128x: Cannot survive fall damage");
                         ImGui::Text("Void Damage Multiplier");
                         EnhancementCombobox("gVoidDamageMul", powers, 7, 0);
                         Tooltip("Modifies damage taken after falling into a void\n\
-2x: Can survive void damage from the start of the game\n\
-4x: Cannot survive void damage from the start of the game\n\
-8x: Can survive void damage twice with max health without double defense\n\
-16x: Can survive void damage with max health without double defense\n\
-32x: Can survive void damage with max health and double defense\n\
-64x: Cannot survive void damage");
+                        2x: Can survive void damage from the start of the game\n\
+                        4x: Cannot survive void damage from the start of the game\n\
+                        8x: Can survive void damage twice with max health without double defense\n\
+                        16x: Can survive void damage with max health without double defense\n\
+                        32x: Can survive void damage with max health and double defense\n\
+                        64x: Cannot survive void damage");
 
                         EnhancementCheckbox("No Random Drops", "gNoRandomDrops");
                         Tooltip("Disables random drops, except from the Goron Pot, Dampe, and bosses");
