@@ -208,21 +208,21 @@ namespace Ship {
     void Window::CreateDefaults() {
 	    const std::shared_ptr<Mercury> pConf = GlobalCtx2::GetInstance()->GetConfig();
         if (pConf->isNewInstance) {
-            pConf->setInt("Window.Width", 640);
-            pConf->setInt("Window.Height", 480);
-            pConf->setBool("Window.Options", false);
-            pConf->setString("Window.GfxBackend", "");
+            pConf->set("Window.Width", 640);
+            pConf->set("Window.Height", 480);
+            pConf->set("Window.Options", false);
+            pConf->set("Window.GfxBackend", "");
 
-            pConf->setBool("Window.Fullscreen.Enabled", false);
-            pConf->setInt("Window.Fullscreen.Width", 1920);
-            pConf->setInt("Window.Fullscreen.Height", 1080);
+            pConf->set("Window.Fullscreen.Enabled", false);
+            pConf->set("Window.Fullscreen.Width", 1920);
+            pConf->set("Window.Fullscreen.Height", 1080);
 
-            pConf->setString("Game.SaveName", "");
-            pConf->setString("Game.Main Archive", "");
-            pConf->setString("Game.Patches Archive", "");
+            pConf->set("Game.SaveName", "");
+            pConf->set("Game.Main Archive", "");
+            pConf->set("Game.Patches Archive", "");
 
-            pConf->setInt("Shortcuts.Fullscreen", 0x044);
-            pConf->setInt("Shortcuts.Console", 0x029);
+            pConf->set("Shortcuts.Fullscreen", 0x044);
+            pConf->set("Shortcuts.Console", 0x029);
             pConf->save();
         }
     }
@@ -233,18 +233,18 @@ namespace Ship {
         CreateDefaults();
 
         SetAudioPlayer();
-        bIsFullscreen = pConf->getBool("Window.Fullscreen.Enabled", false);
+        bIsFullscreen = pConf->get<bool>("Window.Fullscreen.Enabled", false);
 
         if (bIsFullscreen) {
-            dwWidth = pConf->getInt("Window.Fullscreen.Width", 1920);
-            dwHeight = pConf->getInt("Window.Fullscreen.Height", 1080);
+            dwWidth = pConf->get<int>("Window.Fullscreen.Width", 1920);
+            dwHeight = pConf->get<int>("Window.Fullscreen.Height", 1080);
         } else {
-            dwWidth = pConf->getInt("Window.Width", 640);
-            dwHeight = pConf->getInt("Window.Height", 480);
+            dwWidth = pConf->get<int>("Window.Width", 640);
+            dwHeight = pConf->get<int>("Window.Height", 480);
         }
 
-        dwMenubar = pConf->getBool("Window.Options", false);
-        const std::string& gfx_backend = pConf->getString("Window.GfxBackend");
+        dwMenubar = pConf->get<bool>("Window.Options", false);
+        const std::string& gfx_backend = pConf->get<std::string>("Window.GfxBackend", "X");
         SetWindowManager(&WmApi, &RenderingApi, gfx_backend);
 
         gfx_init(WmApi, RenderingApi, GetContext()->GetName().c_str(), bIsFullscreen, dwWidth, dwHeight);
@@ -307,7 +307,7 @@ namespace Ship {
     bool Window::KeyUp(int32_t dwScancode) {
         std::shared_ptr<Mercury> pConf = GlobalCtx2::GetInstance()->GetConfig();
 
-        if (dwScancode == pConf->getInt("Shortcuts.Fullscreen", 0x044)) {
+        if (dwScancode == pConf->get<int>("Shortcuts.Fullscreen", 0x044)) {
             GlobalCtx2::GetInstance()->GetWindow()->ToggleFullscreen();
         }
 
@@ -356,7 +356,7 @@ namespace Ship {
         std::shared_ptr<Mercury> pConf = GlobalCtx2::GetInstance()->GetConfig();
 
         GlobalCtx2::GetInstance()->GetWindow()->bIsFullscreen = bIsFullscreen;
-        pConf->setBool("Window.Fullscreen.Enabled", bIsFullscreen);
+        pConf->set<bool>("Window.Fullscreen.Enabled", bIsFullscreen);
         GlobalCtx2::GetInstance()->GetWindow()->ShowCursor(!bIsFullscreen);
     }
 

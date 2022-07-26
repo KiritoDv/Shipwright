@@ -81,7 +81,7 @@ void Ship::ControlDeck::LoadControllerSettings() {
 
 	for (size_t i = 0; i < virtualDevices.size(); i++) {
 		std::shared_ptr<Controller> backend = physicalDevices[virtualDevices[i]];
-		Config->setString(StringHelper::Sprintf("Controllers.Deck.Slot_%d", (int)i), backend->GetGuid());
+		Config->set(StringHelper::Sprintf("Controllers.Deck.Slot_%d", (int)i), backend->GetGuid());
 	}
 
 	for (const auto& device : physicalDevices) {
@@ -97,9 +97,9 @@ void Ship::ControlDeck::LoadControllerSettings() {
 
 			profile.Mappings.clear();
 			profile.Thresholds.clear();
-			profile.UseRumble = Config->getBool(NESTED("Rumble.Enabled", ""));
-			profile.RumbleStrength = Config->getFloat(NESTED("Rumble.Strength", ""));
-			profile.UseGyro = Config->getBool(NESTED("Gyro.Enabled", ""));
+			profile.UseRumble = Config->get<bool>(NESTED("Rumble.Enabled", ""), false);
+			profile.RumbleStrength = Config->get<float>(NESTED("Rumble.Strength", ""), 1.0f);
+			profile.UseGyro = Config->get<bool>(NESTED("Gyro.Enabled", ""), false);
 
 			for (auto const& val : rawProfile["Thresholds"].items()) {
 				profile.Thresholds[static_cast<ControllerThresholds>(std::stoi(val.key()))] = val.value();
@@ -117,7 +117,7 @@ void Ship::ControlDeck::SaveControllerSettings() {
 
 	for (size_t i = 0; i < virtualDevices.size(); i++) {
 		std::shared_ptr<Controller> backend = physicalDevices[virtualDevices[i]];
-		Config->setString(StringHelper::Sprintf("Controllers.Deck.Slot_%d", (int)i), backend->GetGuid());
+		Config->set(StringHelper::Sprintf("Controllers.Deck.Slot_%d", (int)i), backend->GetGuid());
 	}
 
 	for (const auto& device : physicalDevices) {
@@ -130,20 +130,20 @@ void Ship::ControlDeck::SaveControllerSettings() {
 			if (!device->Connected()) continue;
 
 			auto  rawProfile = Config->rjson["Controllers"][guid][StringHelper::Sprintf("Slot_%d", slot)];
-			Config->setBool(NESTED("Rumble.Enabled", ""), profile.UseRumble);
-			Config->setFloat(NESTED("Rumble.Strength", ""), profile.RumbleStrength);
-			Config->setBool(NESTED("Gyro.Enabled", ""), profile.UseGyro);
+			Config->set(NESTED("Rumble.Enabled", ""), profile.UseRumble);
+			Config->set(NESTED("Rumble.Strength", ""), profile.RumbleStrength);
+			Config->set(NESTED("Gyro.Enabled", ""), profile.UseGyro);
 
 			for (auto const& val : rawProfile["Mappings"].items()) {
-				Config->setInt(NESTED("Mappings.%s", val.key().c_str()), -1);
+				Config->set(NESTED("Mappings.%s", val.key().c_str()), -1);
 			}
 
 			for (auto const& [key, val] : profile.Thresholds) {
-				Config->setFloat(NESTED("Thresholds.%d", key), val);
+				Config->set(NESTED("Thresholds.%d", key), val);
 			}
 
 			for (auto const& [key, val] : profile.Mappings) {
-				Config->setInt(NESTED("Mappings.BTN_%d", val), key);
+				Config->set(NESTED("Mappings.BTN_%d", val), key);
 			}
 
 			slot++;

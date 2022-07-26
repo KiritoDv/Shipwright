@@ -566,11 +566,11 @@ void DebugConsole_SaveCVars()
         const std::string key = StringHelper::Sprintf("CVars.%s", cvar.first.c_str());
 
         if (cvar.second->type == CVAR_TYPE_STRING && cvar.second->value.valueStr != nullptr)
-            pConf->setString(key, std::string(cvar.second->value.valueStr));
+            pConf->set(key, std::string(cvar.second->value.valueStr));
         else if (cvar.second->type == CVAR_TYPE_S32)
-            pConf->setInt(key, cvar.second->value.valueS32);
+            pConf->set(key, cvar.second->value.valueS32);
         else if (cvar.second->type == CVAR_TYPE_FLOAT)
-            pConf->setFloat(key, cvar.second->value.valueFloat);
+            pConf->set(key, cvar.second->value.valueFloat);
     }
 
     pConf->save();

@@ -111,7 +111,7 @@ namespace SohImGui {
     std::map<std::string, CustomWindow> customWindows;
 
     int GetBackendID(std::shared_ptr<Mercury> cfg) {
-        std::string backend = cfg->getString("Window.GfxBackend");
+        std::string backend = cfg->get<std::string>("Window.GfxBackend", "");
         if (backend.empty()) {
             return 0;
         }
@@ -950,7 +950,7 @@ namespace SohImGui {
                 if (ImGui::BeginCombo("##RApi", backends[lastBackendID].second)) {
                     for (uint8_t i = 0; i < sizeof(backends) / sizeof(backends[0]); i++) {
                         if (ImGui::Selectable(backends[i].second, i == lastBackendID)) {
-                            pConf->setString("Window.GfxBackend", backends[i].first);
+                            pConf->set("Window.GfxBackend", backends[i].first);
                             lastBackendID = i;
                         }
                     }
@@ -1303,7 +1303,7 @@ namespace SohImGui {
                         {
                             val = 20;
                         }
-                        
+
                         CVar_SetS32(fps_cvar, val);
                         needs_save = true;
                     }

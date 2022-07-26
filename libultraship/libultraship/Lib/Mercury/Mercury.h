@@ -7,6 +7,7 @@
 class Mercury {
 protected:
     std::string path_;
+    std::unordered_map<std::string, std::any> ramMap;
 public:
     explicit Mercury(std::string path);
 
@@ -14,34 +15,37 @@ public:
     nlohmann::json rjson;
     nlohmann::json nested(const std::string& key);
     static std::string formatNestedKey(const std::string& key);
-    std::string getString(const std::string& key, const std::string& def = "");
-    float getFloat(const std::string& key, float defValue = 0.0f);
-    bool getBool(const std::string& key, bool defValue = false);
-    int getInt(const std::string& key, int defValue = 0);
+	
     bool contains(const std::string& key);
-    template< typename T > std::vector<T> getArray(const std::string& key);
-    void setString(const std::string& key, const std::string& value);
-    void setFloat(const std::string& key, float value);
-    void setBool(const std::string& key, bool value);
-    void setInt(const std::string& key, int value);
-    void setUInt(const std::string& key, uint32_t value);
     void erase(const std::string& key);
-    void set(const std::string& key, std::any value);
-    template< typename T > void setArray(const std::string& key, std::vector<T> array);
+	
+
+    template< typename T > void setArray(const std::string& key, std::vector<T> arr);
+    template< typename T > std::vector<T> getArray(const std::string& key);
+	
+    template< typename T > 
+    void set(const std::string& key, T value) {
+        this->ramMap[key] = value;
+    };
+	
+    template< typename T >    
+    T get(const std::string& key, T def) {
+        return this->ramMap.contains(key) ? std::any_cast<T>(this->ramMap[key]) : def;
+    };
 
     void reload();
-    void save() const;
+    void save();
     bool isNewInstance = false;
 };
 
+template <typename T>
+void Mercury::setArray(const std::string& key, std::vector<T> arr) {
+    this->ramMap[key] = nlohmann::json(arr);    
+}
+
 template< typename T >
 std::vector<T> Mercury::getArray(const std::string& key) {
-	if (nlohmann::json tmp = this->nested(key); tmp.is_array())
+    if (nlohmann::json tmp = this->nested(key); tmp.is_array())
         return tmp.get<std::vector<T>>();
     return std::vector<T>();
 };
-
-template <typename T>
-void Mercury::setArray(const std::string& key, std::vector<T> array) {
-    this->vjson[formatNestedKey(key)] = nlohmann::json(array);
-}

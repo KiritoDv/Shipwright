@@ -1162,7 +1162,7 @@ extern "C" s32* ResourceMgr_LoadCSByName(const char* path)
 }
 
 std::filesystem::path GetSaveFile(std::shared_ptr<Mercury> Conf) {
-    const std::string fileName = Conf->getString("Game.SaveName", Ship::GlobalCtx2::GetPathRelativeToAppDirectory("oot_save.sav"));
+    const std::string fileName = Conf->get<std::string>("Game.SaveName", Ship::GlobalCtx2::GetPathRelativeToAppDirectory("oot_save.sav"));
     std::filesystem::path saveFile = std::filesystem::absolute(fileName);
 
     if (!exists(saveFile.parent_path())) {

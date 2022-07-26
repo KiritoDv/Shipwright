@@ -64,8 +64,8 @@ namespace Ship {
         Config = std::make_shared<Mercury>(GetPathRelativeToAppDirectory("shipofharkinian.json"));
         Config->reload();
 
-        MainPath = Config->getString("Game.Main Archive", GetPathRelativeToAppDirectory("oot.otr"));
-        PatchesPath = Config->getString("Game.Patches Archive", GetAppDirectoryPath() + "/mods");
+        MainPath    = Config->get<std::string>("Game.Main Archive", GetPathRelativeToAppDirectory("oot.otr"));
+        PatchesPath = Config->get<std::string>("Game.Patches Archive", GetAppDirectoryPath() + "/mods");
 
         ResMan = std::make_shared<ResourceMgr>(GetInstance(), MainPath, PatchesPath);
         Win = std::make_shared<Window>(GetInstance());
