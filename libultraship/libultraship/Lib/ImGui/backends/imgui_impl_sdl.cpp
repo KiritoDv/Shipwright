@@ -435,7 +435,9 @@ static bool ImGui_ImplSDL2_Init(SDL_Window* window, SDL_Renderer* renderer, void
     SDL_VERSION(&info.version);
     if (SDL_GetWindowWMInfo(window, &info))
     {
-#ifdef _WIN32
+#if defined(_XBOX)
+        main_viewport->PlatformHandleRaw = info.info.winrt.window;
+#elif defined(_WIN32)
         main_viewport->PlatformHandleRaw = (void*)info.info.win.window;
 #elif defined(__APPLE__)
         main_viewport->PlatformHandleRaw = (void*)info.info.cocoa.window;
@@ -793,8 +795,10 @@ static void ImGui_ImplSDL2_CreateWindow(ImGuiViewport* viewport)
     SDL_VERSION(&info.version);
     if (SDL_GetWindowWMInfo(vd->Window, &info))
     {
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(_XBOX)
         viewport->PlatformHandleRaw = info.info.win.window;
+#elif defined(_XBOX)
+        viewport->PlatformHandleRaw = info.info.winrt.window;
 #elif defined(__APPLE__)
         viewport->PlatformHandleRaw = (void*)info.info.cocoa.window;
 #endif
@@ -820,7 +824,7 @@ static void ImGui_ImplSDL2_DestroyWindow(ImGuiViewport* viewport)
 static void ImGui_ImplSDL2_ShowWindow(ImGuiViewport* viewport)
 {
     ImGui_ImplSDL2_ViewportData* vd = (ImGui_ImplSDL2_ViewportData*)viewport->PlatformUserData;
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(_XBOX)
     HWND hwnd = (HWND)viewport->PlatformHandleRaw;
 
     // SDL hack: Hide icon from task bar

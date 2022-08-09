@@ -101,11 +101,23 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 		)
 	endif()
 	set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
+elseif ( CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+	get_property(MSVC_RUNTIME_LIBRARY_DEFAULT TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY)
+	string(CONCAT "MSVC_RUNTIME_LIBRARY_STR"
+			$<$<CONFIG:Debug>:
+                MultiThreadedDebugDLL
+			>
+			$<$<CONFIG:Release>:
+				MultiThreadedDLL
+			>
+			$<$<NOT:$<OR:$<CONFIG:Debug>,$<CONFIG:Release>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
+		)
+	set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
 endif()
 ################################################################################
 # Compile definitions
 ################################################################################
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
 	if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
 		target_compile_definitions(${PROJECT_NAME} PRIVATE
 			"$<$<CONFIG:Debug>:"
@@ -235,7 +247,7 @@ add_dependencies(${PROJECT_NAME}
 
 # Link with other targets.
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
 	if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
 		set(ADDITIONAL_LIBRARY_DEPENDENCIES
 			"$<$<CONFIG:Debug>:"
@@ -246,4 +258,3 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	endif()
 endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC "${ADDITIONAL_LIBRARY_DEPENDENCIES}")
-

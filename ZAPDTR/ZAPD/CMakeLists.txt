@@ -303,6 +303,18 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 		)
 	endif()
 	set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
+elseif ( CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+	get_property(MSVC_RUNTIME_LIBRARY_DEFAULT TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY)
+	string(CONCAT "MSVC_RUNTIME_LIBRARY_STR"
+			$<$<CONFIG:Debug>:
+                MultiThreadedDebugDLL
+			>
+			$<$<CONFIG:Release>:
+				MultiThreadedDLL
+			>
+			$<$<NOT:$<OR:$<CONFIG:Debug>,$<CONFIG:Release>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
+		)
+	set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
 endif()
 ################################################################################
 # Compile definitions
@@ -410,7 +422,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU|Clang|AppleClang")
         $<$<COMPILE_LANGUAGE:CXX>:-Wno-deprecated-enum-enum-conversion>
 		-pthread
 	)
-	
+
     if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         target_link_options(${PROJECT_NAME} PRIVATE
             -pthread

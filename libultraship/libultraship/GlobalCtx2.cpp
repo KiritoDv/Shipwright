@@ -13,6 +13,11 @@
 #include "SwitchImpl.h"
 #endif
 
+#ifdef _XBOX
+#define MessageBox(a, b, c, d) wprintf(b)
+#endif // _XBOX
+
+
 namespace Ship {
     std::weak_ptr<GlobalCtx2> GlobalCtx2::Context;
     std::shared_ptr<GlobalCtx2> GlobalCtx2::GetInstance() {

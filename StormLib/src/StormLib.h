@@ -1113,7 +1113,7 @@ int    WINAPI SCompDecompress2(void * pvOutBuffer, int * pcbOutBuffer, void * pv
 //-----------------------------------------------------------------------------
 // Non-Windows support for SetLastError/GetLastError
 
-#ifndef STORMLIB_WINDOWS
+#ifndef STORMLIB_MICROSOFT
 
 void  SetLastError(DWORD dwErrCode);
 DWORD GetLastError();

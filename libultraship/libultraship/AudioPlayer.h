@@ -15,7 +15,7 @@ namespace Ship {
 	};
 }
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_XBOX)
 #include "WasapiAudioPlayer.h"
 #elif defined(__linux)
 #include "PulseAudioPlayer.h"

@@ -172,10 +172,12 @@ namespace SohImGui {
 
     void ImGuiWMInit() {
         switch (impl.backend) {
+#ifdef ENABLE_OPENGL
         case Backend::SDL:
             SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "1");
             ImGui_ImplSDL2_InitForOpenGL(static_cast<SDL_Window*>(impl.sdl.window), impl.sdl.context);
             break;
+#endif
 #if defined(ENABLE_DX11) || defined(ENABLE_DX12)
         case Backend::DX11:
             ImGui_ImplWin32_Init(impl.dx11.window);
@@ -192,7 +194,7 @@ namespace SohImGui {
         case Backend::SDL:
         #if defined(__APPLE__)
             ImGui_ImplOpenGL3_Init("#version 410 core");
-        #else
+        #elif defined(ENABLE_OPENGL)
             ImGui_ImplOpenGL3_Init("#version 120");
         #endif
             break;
@@ -209,9 +211,11 @@ namespace SohImGui {
 
     void ImGuiProcessEvent(EventImpl event) {
         switch (impl.backend) {
+#if defined(ENABLE_OPENGL)
         case Backend::SDL:
             ImGui_ImplSDL2_ProcessEvent(static_cast<const SDL_Event*>(event.sdl.event));
             break;
+#endif
 #if defined(ENABLE_DX11) || defined(ENABLE_DX12)
         case Backend::DX11:
             ImGui_ImplWin32_WndProcHandler(static_cast<HWND>(event.win32.handle), event.win32.msg, event.win32.wparam, event.win32.lparam);
@@ -224,9 +228,11 @@ namespace SohImGui {
 
     void ImGuiWMNewFrame() {
         switch (impl.backend) {
+#if defined(ENABLE_OPENGL)
         case Backend::SDL:
             ImGui_ImplSDL2_NewFrame(static_cast<SDL_Window*>(impl.sdl.window));
             break;
+#endif
 #if defined(ENABLE_DX11) || defined(ENABLE_DX12)
         case Backend::DX11:
             ImGui_ImplWin32_NewFrame();
@@ -239,9 +245,11 @@ namespace SohImGui {
 
     void ImGuiBackendNewFrame() {
         switch (impl.backend) {
+#ifdef ENABLE_OPENGL
         case Backend::SDL:
             ImGui_ImplOpenGL3_NewFrame();
             break;
+#endif
 #if defined(ENABLE_DX11) || defined(ENABLE_DX12)
         case Backend::DX11:
             ImGui_ImplDX11_NewFrame();
@@ -254,9 +262,11 @@ namespace SohImGui {
 
     void ImGuiRenderDrawData(ImDrawData* data) {
         switch (impl.backend) {
+#ifdef ENABLE_OPENGL
         case Backend::SDL:
             ImGui_ImplOpenGL3_RenderDrawData(data);
             break;
+#endif
 #if defined(ENABLE_DX11) || defined(ENABLE_DX12)
         case Backend::DX11:
             ImGui_ImplDX11_RenderDrawData(data);

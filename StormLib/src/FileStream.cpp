@@ -33,7 +33,7 @@
 //-----------------------------------------------------------------------------
 // Local functions - platform-specific functions
 
-#ifndef STORMLIB_WINDOWS
+#ifndef STORMLIB_MICROSOFT
 static thread_local DWORD dwLastError = ERROR_SUCCESS;
 
 DWORD GetLastError()
@@ -376,6 +376,10 @@ static bool BaseFile_Resize(TFileStream * pStream, ULONGLONG NewFileSize)
         return true;
     }
 #endif
+
+#ifdef STORMLIB_XBOX
+    return true;
+#endif // STORMLIB_XBOX
 }
 
 // Gives the current file size
@@ -418,6 +422,10 @@ static bool BaseFile_Replace(TFileStream * pStream, TFileStream * pNewStream)
 
     return true;
 #endif
+
+#ifdef STORMLIB_XBOX
+    return true;
+#endif // STORMLIB_XBOX
 }
 
 static void BaseFile_Close(TFileStream * pStream)
@@ -666,9 +674,12 @@ static void BaseMap_Init(TFileStream * pStream)
 
 static const TCHAR * BaseHttp_ExtractServerName(const TCHAR * szFileName, TCHAR * szServerName)
 {
+#ifndef STORMLIB_XBOX
+
     // Check for HTTP
     if(!_tcsnicmp(szFileName, _T("http://"), 7))
         szFileName += 7;
+#endif // STORMLIB_XBOX
 
     // Cut off the server name
     if(szServerName != NULL)
@@ -2546,7 +2557,7 @@ size_t FileStream_Prefix(const TCHAR * szFileName, DWORD * pdwProvider)
     size_t nPrefixLength1 = 0;
     size_t nPrefixLength2 = 0;
     DWORD dwProvider = 0;
-
+#ifndef STORMLIB_XBOX
     if(szFileName != NULL)
     {
         //
@@ -2611,6 +2622,7 @@ size_t FileStream_Prefix(const TCHAR * szFileName, DWORD * pdwProvider)
             return nPrefixLength1 + nPrefixLength2;
         }
     }
+#endif // !STORMLIB_XBOX
 
     return 0;
 }

@@ -66,7 +66,7 @@ set(Source_Files__Audio__extra
     "WasapiAudioPlayer.cpp"
     "WasapiAudioPlayer.h"
 )
-else()
+elseif(NOT CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
 set(Source_Files__Audio__extra
     "PulseAudioPlayer.cpp"
     "PulseAudioPlayer.h"
@@ -174,6 +174,16 @@ set(Source_Files__Lib__Fast3D__extra
     "Lib/Fast3D/gfx_dxgi.cpp"
     "Lib/Fast3D/gfx_dxgi.h"
 )
+elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+    set(Source_Files__Lib__Fast3D__extra
+    "Lib/Fast3D/gfx_direct3d11.cpp"
+    "Lib/Fast3D/gfx_direct3d11.h"
+    "Lib/Fast3D/gfx_direct3d12.cpp"
+    "Lib/Fast3D/gfx_direct3d12.h"
+    "Lib/Fast3D/gfx_direct3d12_guids.h"
+    "Lib/Fast3D/gfx_direct3d_common.cpp"
+    "Lib/Fast3D/gfx_direct3d_common.h"
+)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 set(Source_Files__Lib__Fast3D__extra
     "Lib/Fast3D/gfx_glx.cpp"
@@ -182,6 +192,23 @@ set(Source_Files__Lib__Fast3D__extra
 endif()
 source_group("Source Files\\Lib\\Fast3D\\extra" FILES ${Source_Files__Lib__Fast3D__extra})
 
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+set(Source_Files__Lib__ImGui
+    "Lib/ImGui/backends/imgui_impl_sdl.cpp"
+    "Lib/ImGui/backends/imgui_impl_sdl.h"
+    "Lib/ImGui/imconfig.h"
+    "Lib/ImGui/imgui.cpp"
+    "Lib/ImGui/imgui.h"
+    "Lib/ImGui/imgui_demo.cpp"
+    "Lib/ImGui/imgui_draw.cpp"
+    "Lib/ImGui/imgui_internal.h"
+    "Lib/ImGui/imgui_tables.cpp"
+    "Lib/ImGui/imgui_widgets.cpp"
+    "Lib/ImGui/imstb_rectpack.h"
+    "Lib/ImGui/imstb_textedit.h"
+    "Lib/ImGui/imstb_truetype.h"
+)
+else()
 set(Source_Files__Lib__ImGui
     "Lib/ImGui/backends/imgui_impl_opengl3.cpp"
     "Lib/ImGui/backends/imgui_impl_opengl3.h"
@@ -199,12 +226,19 @@ set(Source_Files__Lib__ImGui
     "Lib/ImGui/imstb_textedit.h"
     "Lib/ImGui/imstb_truetype.h"
 )
+endif()
+
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 set(Source_Files__Lib__ImGui__Windows
     "Lib/ImGui/backends/imgui_impl_dx11.cpp"
     "Lib/ImGui/backends/imgui_impl_dx11.h"
     "Lib/ImGui/backends/imgui_impl_win32.cpp"
     "Lib/ImGui/backends/imgui_impl_win32.h"
+)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+set(Source_Files__Lib__ImGui__Windows
+    "Lib/ImGui/backends/imgui_impl_dx11.cpp"
+    "Lib/ImGui/backends/imgui_impl_dx11.h"
 )
 endif ()
 source_group("Source Files\\Lib\\ImGui" FILES ${Source_Files__Lib__ImGui} ${Source_Files__Lib__ImGui__Windows})
@@ -354,13 +388,13 @@ if (NOT TARGET storm)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../StormLib ${CMAKE_BINARY_DIR}/StormLib EXCLUDE_FROM_ALL)
 endif()
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 endif()
 
 set(ROOT_NAMESPACE libultraship)
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
 	set_target_properties(${PROJECT_NAME} PROPERTIES
 		VS_GLOBAL_KEYWORD "Win32Proj"
 	)
@@ -400,6 +434,18 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			$<$<NOT:$<OR:$<CONFIG:Debug>,$<CONFIG:Release>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
 		)
 	endif()
+	set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
+elseif ( CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+	get_property(MSVC_RUNTIME_LIBRARY_DEFAULT TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY)
+	string(CONCAT "MSVC_RUNTIME_LIBRARY_STR"
+			$<$<CONFIG:Debug>:
+                MultiThreadedDebugDLL
+			>
+			$<$<CONFIG:Release>:
+				MultiThreadedDLL
+			>
+			$<$<NOT:$<OR:$<CONFIG:Debug>,$<CONFIG:Release>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
+		)
 	set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
 endif()
 ################################################################################
@@ -445,6 +491,24 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			STORMLIB_NO_AUTO_LINK
 		)
 	endif()
+elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+			"$<$<CONFIG:Debug>:"
+				"_DEBUG"
+			">"
+			"$<$<CONFIG:Release>:"
+				"NDEBUG"
+			">"
+			"SPDLOG_ACTIVE_LEVEL=0;"
+			"WIN32;"
+			"_CONSOLE;"
+			"ENABLE_DX11;"
+			"%(PreprocessorDefinitions)"
+			"UNICODE;"
+			"_UNICODE"
+            "_XBOX"
+			STORMLIB_NO_AUTO_LINK
+		)
 endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU|Clang|AppleClang")
@@ -462,12 +526,12 @@ endif()
 ################################################################################
 # Compile and link options
 ################################################################################
-if (NOT CMAKE_SYSTEM_NAME MATCHES "Windows|NintendoSwitch")
+if (NOT CMAKE_SYSTEM_NAME MATCHES "Windows|WindowsStore|NintendoSwitch")
     find_package(SDL2)
     find_package(GLEW)
     find_package(X11)
     if (NOT GLEW_FOUND)
-        if (NOT CMAKE_SYSTEM_NAME MATCHES "Windows|Darwin")
+        if (NOT CMAKE_SYSTEM_NAME MATCHES "Windows|WindowsStore|Darwin")
             include (FetchContent)
             FetchContent_Declare(
                 glew
@@ -588,7 +652,7 @@ if (NOT GLEW_FOUND)
 else()
     set(GLEW-LIB  GLEW::GLEW)
 endif()
- 
+
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         target_link_libraries(${PROJECT_NAME}
@@ -603,6 +667,10 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
             "storm;"
         )
     endif()
+elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+    target_link_libraries(${PROJECT_NAME}
+            "storm;"
+        )
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     find_package(SDL2)
     find_package(GLEW)
@@ -639,7 +707,7 @@ else()
     )
 endif()
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         add_library(glew32s STATIC IMPORTED )
         set_property(TARGET glew32s PROPERTY

@@ -395,7 +395,7 @@ namespace Ship {
     }
 
     void Window::InitializeAudioPlayer() {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_XBOX)
         APlayer = std::make_shared<WasapiAudioPlayer>();
 #elif defined(__linux)
         APlayer = std::make_shared<PulseAudioPlayer>();

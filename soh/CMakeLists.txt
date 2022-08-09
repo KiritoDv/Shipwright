@@ -301,7 +301,7 @@ set(Source_Files__soh__Enhancements__randomizer__3drando__hint_list
     "soh/Enhancements/randomizer/3drando/hint_list/hint_list_exclude_overworld.cpp"
     "soh/Enhancements/randomizer/3drando/hint_list/hint_list_item.cpp"
 )
-source_group("Source Files\\soh\\Enhancements\\randomizer\\3drando\\hint_list" FILES ${Source_Files__soh__Enhancements__randomizer__3drando__hint_list}) 
+source_group("Source Files\\soh\\Enhancements\\randomizer\\3drando\\hint_list" FILES ${Source_Files__soh__Enhancements__randomizer__3drando__hint_list})
 
 set(Source_Files__soh__Enhancements__randomizer__3drando__location_access
     "soh/Enhancements/randomizer/3drando/location_access/locacc_bottom_of_the_well.cpp"
@@ -324,7 +324,7 @@ set(Source_Files__soh__Enhancements__randomizer__3drando__location_access
     "soh/Enhancements/randomizer/3drando/location_access/locacc_water_temple.cpp"
     "soh/Enhancements/randomizer/3drando/location_access/locacc_zoras_domain.cpp"
 )
-source_group("Source Files\\soh\\Enhancements\\randomizer\\3drando\\location_access" FILES ${Source_Files__soh__Enhancements__randomizer__3drando__location_access})   
+source_group("Source Files\\soh\\Enhancements\\randomizer\\3drando\\location_access" FILES ${Source_Files__soh__Enhancements__randomizer__3drando__location_access})
 
 set(Source_Files__src__boot
     "src/boot/assert.c"
@@ -1561,13 +1561,17 @@ set(ALL_FILES
 ################################################################################
 add_executable(${PROJECT_NAME} ${ALL_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/Resource.rc)
 
+if (CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+    set_target_properties(${PROJECT_NAME} PROPERTIES VS_CPPWINRT true)
+endif()
+
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 endif()
 
 set(ROOT_NAMESPACE soh)
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
 	set_target_properties(${PROJECT_NAME} PROPERTIES
 		VS_GLOBAL_KEYWORD "Win32Proj"
 	)
@@ -1616,11 +1620,23 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 		)
 	endif()
 	set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
+elseif ( CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+	get_property(MSVC_RUNTIME_LIBRARY_DEFAULT TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY)
+	string(CONCAT "MSVC_RUNTIME_LIBRARY_STR"
+			$<$<CONFIG:Debug>:
+                MultiThreadedDebugDLL
+			>
+			$<$<CONFIG:Release>:
+				MultiThreadedDLL
+			>
+			$<$<NOT:$<OR:$<CONFIG:Debug>,$<CONFIG:Release>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
+		)
+	set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
 endif()
 ################################################################################
 # Compile definitions
 ################################################################################
-if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     find_package(SDL2)
     set(SDL2-INCLUDE ${SDL2_INCLUDE_DIRS})
 else()
@@ -1681,6 +1697,25 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			STORMLIB_NO_AUTO_LINK
 		)
 	endif()
+elseif (CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+			"$<$<CONFIG:Debug>:"
+				"_DEBUG;"
+				"_CRT_SECURE_NO_WARNINGS;"
+				"ENABLE_DX11"
+			">"
+			"$<$<CONFIG:Release>:"
+				"NDEBUG"
+			">"
+			"INCLUDE_GAME_PRINTF;"
+			"_CONSOLE;"
+			"%(PreprocessorDefinitions)GLEW_STATIC;"
+			"UNICODE;"
+			"_UNICODE"
+            "_XBOX"
+			STORMLIB_NO_AUTO_LINK
+			"_CRT_SECURE_NO_WARNINGS;"
+		)
 endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU|Clang|AppleClang")
@@ -1868,7 +1903,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			"version;"
 			"setupapi"
 		)
-	elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32") 
+	elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
 		set(ADDITIONAL_LIBRARY_DEPENDENCIES
 			"libultraship;"
 			"ZAPDUtils;"
@@ -1882,6 +1917,15 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			"setupapi"
 		)
 	endif()
+elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+    set(ADDITIONAL_LIBRARY_DEPENDENCIES
+			"libultraship;"
+			"ZAPDUtils;"
+			"winmm;"
+			"imm32;"
+			"version;"
+			"setupapi"
+		)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "NintendoSwitch")
     find_package(SDL2)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
@@ -1983,7 +2027,7 @@ nx_generate_nacp(Ship.nacp
    AUTHOR "Harbour Masters"
    VERSION "3.1.0"
 )
- 
+
 nx_create_nro(soh
     NACP Ship.nacp
     ICON ${CMAKE_CURRENT_SOURCE_DIR}/icon.jpg

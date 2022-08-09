@@ -25,6 +25,17 @@ set(VCPKG_TARGET_TRIPLET x64-windows-static)
 
 vcpkg_bootstrap()
 vcpkg_install_packages(zlib bzip2 libpng)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+    include(cmake/automate-vcpkg.cmake)
+
+    set(VCPKG_TRIPLET x64-uwp)
+    set(VCPKG_TARGET_TRIPLET x64-uwp)
+    set(CMAKE_VS_WINRT_BY_DEFAULT TRUE)
+    set(VS_WINRT_COMPONENT TRUE)
+    message("${CMAKE_VS_PLATFORM_NAME}")
+
+    vcpkg_bootstrap()
+    vcpkg_install_packages(zlib bzip2 libpng sdl2)
 endif()
 
 ################################################################################
@@ -40,6 +51,8 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 		OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32"))
 		message(FATAL_ERROR "${CMAKE_VS_PLATFORM_NAME} arch is not supported!")
 	endif()
+elseif (CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+    # set(CMAKE_VS_PLATFORM_NAME "x64")
 endif()
 
 ################################################################################
@@ -122,7 +135,7 @@ add_subdirectory(ZAPDTR/ZAPD ${CMAKE_BINARY_DIR}/ZAPD)
 add_subdirectory(ZAPDTR/ZAPDUtils ${CMAKE_BINARY_DIR}/ZAPDUtils)
 add_subdirectory(OTRExporter)
 add_subdirectory(soh)
-if(NOT CMAKE_SYSTEM_NAME MATCHES "Darwin|NintendoSwitch")
+if(NOT CMAKE_SYSTEM_NAME MATCHES "Darwin|NintendoSwitch|WindowsStore")
 add_subdirectory(OTRGui)
 endif()
 

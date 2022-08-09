@@ -34,6 +34,10 @@
 #include "gfx_pc.h"
 #define DEBUG_D3D 0
 
+#ifdef _XBOX
+#define MessageBoxA(a, b, c, d) printf(c ": %s\n", b)
+#endif
+
 using namespace Microsoft::WRL; // For ComPtr
 
 namespace {
@@ -205,6 +209,7 @@ static void create_depth_stencil_objects(uint32_t width, uint32_t height, uint32
 }
 
 static void gfx_d3d11_init(void) {
+#ifndef _XBOX
     // Load d3d11.dll
     d3d.d3d11_module = LoadLibraryW(L"d3d11.dll");
     if (d3d.d3d11_module == nullptr) {
@@ -218,7 +223,7 @@ static void gfx_d3d11_init(void) {
         ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()), gfx_dxgi_get_h_wnd(), "D3DCompiler_47.dll not found");
     }
     d3d.D3DCompile = (pD3DCompile)GetProcAddress(d3d.d3dcompiler_module, "D3DCompile");
-
+#endif
     // Create D3D11 device
 
     gfx_dxgi_create_factory_and_device(DEBUG_D3D, 11, [](IDXGIAdapter1 *adapter, bool test_only) {
@@ -232,7 +237,7 @@ static void gfx_d3d11_init(void) {
             D3D_FEATURE_LEVEL_10_1,
             D3D_FEATURE_LEVEL_10_0
         };
-
+#ifndef _XBOX
         HRESULT res = d3d.D3D11CreateDevice(
             adapter,
             D3D_DRIVER_TYPE_UNKNOWN, // since we use a specific adapter
@@ -244,7 +249,19 @@ static void gfx_d3d11_init(void) {
             test_only ? nullptr : d3d.device.GetAddressOf(),
             &d3d.feature_level,
             test_only ? nullptr : d3d.context.GetAddressOf());
-
+#else
+        HRESULT res = D3D11CreateDevice(
+            adapter,
+            D3D_DRIVER_TYPE_UNKNOWN, // since we use a specific adapter
+            nullptr,
+            device_creation_flags,
+            FeatureLevels,
+            ARRAYSIZE(FeatureLevels),
+            D3D11_SDK_VERSION,
+            test_only ? nullptr : d3d.device.GetAddressOf(),
+            &d3d.feature_level,
+            test_only ? nullptr : d3d.context.GetAddressOf());
+#endif
         if (test_only) {
             return SUCCEEDED(res);
         } else {
@@ -367,9 +384,11 @@ void CSMain(uint3 DTid : SV_DispatchThreadID) {
 
     ComPtr<ID3DBlob> cs, error_blob;
     HRESULT hr;
-
+#ifndef _XBOX
     hr = d3d.D3DCompile(shader_source, strlen(shader_source), nullptr, nullptr, nullptr, "CSMain", "cs_4_0", compile_flags, 0, cs.GetAddressOf(), error_blob.GetAddressOf());
-
+#else
+    hr = D3DCompile(shader_source, strlen(shader_source), nullptr, nullptr, nullptr, "CSMain", "cs_4_0", compile_flags, 0, cs.GetAddressOf(), error_blob.GetAddressOf());
+#endif
     if (FAILED(hr)) {
         char* err = (char*)error_blob->GetBufferPointer();
         MessageBoxA(gfx_dxgi_get_h_wnd(), err, "Error", MB_OK | MB_ICONERROR);
@@ -378,7 +397,11 @@ void CSMain(uint3 DTid : SV_DispatchThreadID) {
 
     ThrowIfFailed(d3d.device->CreateComputeShader(cs->GetBufferPointer(), cs->GetBufferSize(), nullptr, d3d.compute_shader.GetAddressOf()));
 
+#ifndef _XBOX
     hr = d3d.D3DCompile(shader_source_msaa, strlen(shader_source_msaa), nullptr, nullptr, nullptr, "CSMain", "cs_4_1", compile_flags, 0, d3d.compute_shader_msaa_blob.GetAddressOf(), error_blob.ReleaseAndGetAddressOf());
+#else
+    hr = D3DCompile(shader_source, strlen(shader_source), nullptr, nullptr, nullptr, "CSMain", "cs_4_0", compile_flags, 0, cs.GetAddressOf(), error_blob.GetAddressOf());
+#endif
 
     if (FAILED(hr)) {
         char* err = (char*)error_blob->GetBufferPointer();
@@ -423,17 +446,22 @@ static struct ShaderProgram *gfx_d3d11_create_and_load_new_shader(uint64_t shade
 #else
     UINT compile_flags = D3DCOMPILE_OPTIMIZATION_LEVEL2;
 #endif
-
+    
+#ifndef _XBOX
     HRESULT hr = d3d.D3DCompile(buf, len, nullptr, nullptr, nullptr, "VSMain", "vs_4_0", compile_flags, 0, vs.GetAddressOf(), error_blob.GetAddressOf());
-
+#else
+    HRESULT hr = D3DCompile(buf, len, nullptr, nullptr, nullptr, "VSMain", "vs_4_0", compile_flags, 0, vs.GetAddressOf(), error_blob.GetAddressOf());
+#endif
     if (FAILED(hr)) {
         char* err = (char*)error_blob->GetBufferPointer();
         MessageBoxA(gfx_dxgi_get_h_wnd(), err, "Error", MB_OK | MB_ICONERROR);
         throw hr;
     }
-
+#ifndef _XBOX
     hr = d3d.D3DCompile(buf, len, nullptr, nullptr, nullptr, "PSMain", "ps_4_0", compile_flags, 0, ps.GetAddressOf(), error_blob.GetAddressOf());
-
+#else
+    hr = D3DCompile(buf, len, nullptr, nullptr, nullptr, "PSMain", "ps_4_0", compile_flags, 0, ps.GetAddressOf(), error_blob.GetAddressOf());
+#endif
     if (FAILED(hr)) {
         char* err = (char*)error_blob->GetBufferPointer();
         MessageBoxA(gfx_dxgi_get_h_wnd(), err, "Error", MB_OK | MB_ICONERROR);

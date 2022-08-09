@@ -36,6 +36,26 @@
 //-----------------------------------------------------------------------------
 // Defines for Windows
 
+#if !defined(STORMLIB_PLATFORM_DEFINED) && defined(_XBOX)
+    #include <tchar.h>
+    #include <assert.h>
+    #include <ctype.h>
+    #include <stdio.h>
+
+    // Suppress definitions of `min` and `max` macros by <windows.h>:
+    #define NOMINMAX 1
+    #include <windows.h>
+
+    #define STORMLIB_LITTLE_ENDIAN
+    #define STORMLIB_64BIT
+
+    #define STORMLIB_CDECL __cdecl
+    
+    #define STORMLIB_MICROSOFT
+    #define STORMLIB_XBOX
+    #define STORMLIB_PLATFORM_DEFINED
+#endif
+
 #if !defined(STORMLIB_PLATFORM_DEFINED) && defined(_WIN32)
 
   // In MSVC 8.0, there are some functions declared as deprecated.
@@ -63,7 +83,8 @@
   #endif
 
   #define STORMLIB_CDECL __cdecl
-
+    
+  #define STORMLIB_MICROSOFT
   #define STORMLIB_WINDOWS
   #define STORMLIB_PLATFORM_DEFINED                 // The platform is known now
 
@@ -291,7 +312,7 @@
 //-----------------------------------------------------------------------------
 // Definition of Windows-specific types for non-Windows platforms
 
-#ifndef STORMLIB_WINDOWS
+#ifndef STORMLIB_MICROSOFT
   #if __LP64__
     #define STORMLIB_64BIT
   #else

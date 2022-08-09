@@ -16,7 +16,7 @@ option(STORM_BUILD_TESTS
 #   "BUILD_TESTING" OFF # Stay coherent with CTest variables
 )
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
 set(Source_Files__Windows
            src/lzma/C/LzFindMt.c
            src/lzma/C/Threads.c
@@ -342,7 +342,7 @@ if(WIN32)
     set_target_properties(${LIBRARY_NAME} PROPERTIES OUTPUT_NAME "StormLib")
 endif()
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
 use_props(${LIBRARY_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 endif()
 
@@ -380,6 +380,21 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
                        "_UNICODE"
                )
        endif()
+elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+        target_compile_definitions(${LIBRARY_NAME} PRIVATE
+                "$<$<CONFIG:Debug>:"
+                        "_DEBUG;"
+                        "_CRT_SECURE_NO_WARNINGS;"
+                ">"
+                "$<$<CONFIG:Release>:"
+                        "NDEBUG"
+                ">"
+                WIN32
+                _LIB
+                "UNICODE;"
+                "_UNICODE"
+                "_XBOX"
+        )
 endif()
 
 ################################################################################
@@ -409,6 +424,18 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
                 )
         endif()
         set_target_properties(${LIBRARY_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
+elseif ( CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+	get_property(MSVC_RUNTIME_LIBRARY_DEFAULT TARGET ${LIBRARY_NAME} PROPERTY MSVC_RUNTIME_LIBRARY)
+	string(CONCAT "MSVC_RUNTIME_LIBRARY_STR"
+			$<$<CONFIG:Debug>:
+                MultiThreadedDebugDLL
+			>
+			$<$<CONFIG:Release>:
+				MultiThreadedDLL
+			>
+			$<$<NOT:$<OR:$<CONFIG:Debug>,$<CONFIG:Release>>>:${MSVC_RUNTIME_LIBRARY_DEFAULT}>
+		)
+	set_target_properties(${LIBRARY_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUNTIME_LIBRARY_STR})
 endif()
 
 

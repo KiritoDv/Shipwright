@@ -90,7 +90,7 @@ void Ship::Switch::SetupFont(ImFontAtlas* fonts) {
             0,
         };
 
-    fonts->AddFontFromMemoryTTF (fonts_ext.address, fonts_ext.size, 24.0f, &config, ranges);
+    fonts->AddFontFromMemoryTTF(fonts_ext.address, fonts_ext.size, 24.0f, &config, ranges);
     fonts->Build ();
 
     plExit();
