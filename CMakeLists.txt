@@ -22,6 +22,7 @@ include(cmake/automate-vcpkg.cmake)
 
 set(VCPKG_TRIPLET x64-windows-static)
 set(VCPKG_TARGET_TRIPLET x64-windows-static)
+set(VCPKG_CRT_LINKAGE dynamic)
 
 vcpkg_bootstrap()
 vcpkg_install_packages(zlib bzip2 libpng)

@@ -500,6 +500,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
 				"NDEBUG"
 			">"
 			"SPDLOG_ACTIVE_LEVEL=0;"
+            "_CRT_SECURE_NO_WARNINGS;"
 			"WIN32;"
 			"_CONSOLE;"
 			"ENABLE_DX11;"
