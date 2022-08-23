@@ -35,6 +35,9 @@
 
 #ifndef STORMLIB_MICROSOFT
 static thread_local DWORD dwLastError = ERROR_SUCCESS;
+#else
+static DWORD dwLastError = ERROR_SUCCESS;
+#endif
 
 DWORD GetLastError()
 {

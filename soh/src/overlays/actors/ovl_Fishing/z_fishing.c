@@ -90,7 +90,7 @@ typedef struct {
     /* 0x32 */ s16 timer;
     /* 0x34 */ u8 shouldDraw;
     /* 0x38 */ f32 drawDistance;
-    s32 epoch;
+    u32 epoch;
 } FishingProp; // size = 0x3C
 
 typedef enum {
@@ -116,7 +116,7 @@ typedef struct {
     /* 0x40 */ s16 unk_40;
     /* 0x42 */ s16 unk_42;
     /* 0x44 */ u8 shouldDraw;
-    s32 epoch;
+    u32 epoch;
 } FishingGroupFish; // size = 0x48
 
 #define LINE_SEG_COUNT 200
@@ -1766,8 +1766,6 @@ static f32 sSinkingLureSizes[] = {
 void Fishing_DrawSinkingLure(GlobalContext* globalCtx) {
     s16 i;
     f32 scale;
-    static s32 epoch = 0;
-    epoch++;
 
     OPEN_DISPS(globalCtx->state.gfxCtx);
 
@@ -1780,7 +1778,7 @@ void Fishing_DrawSinkingLure(GlobalContext* globalCtx) {
 
         for (i = SINKING_LURE_SEG_COUNT - 1; i >= 0; i--) {
             if ((i + D_80B7FEA0) < SINKING_LURE_SEG_COUNT) {
-                FrameInterpolation_RecordOpenChild("Fishing Lures 1", epoch + i * 25);
+                FrameInterpolation_RecordOpenChild("Fishing Lures 1", i);
                 Matrix_Translate(sSinkingLurePos[i].x, sSinkingLurePos[i].y, sSinkingLurePos[i].z, MTXMODE_NEW);
                 scale = sSinkingLureSizes[i + D_80B7FEA0] * 0.04f;
                 Matrix_Scale(scale, scale, scale, MTXMODE_APPLY);
@@ -1799,7 +1797,7 @@ void Fishing_DrawSinkingLure(GlobalContext* globalCtx) {
 
         for (i = SINKING_LURE_SEG_COUNT - 1; i >= 0; i--) {
             if ((i + D_80B7FEA0) < SINKING_LURE_SEG_COUNT) {
-                FrameInterpolation_RecordOpenChild("Fishing Lures 2", epoch + i * 25);
+                FrameInterpolation_RecordOpenChild("Fishing Lures 2", i);
                 Matrix_Translate(sSinkingLurePos[i].x, sSinkingLurePos[i].y, sSinkingLurePos[i].z, MTXMODE_NEW);
                 scale = sSinkingLureSizes[i + D_80B7FEA0] * 0.04f;
                 Matrix_Scale(scale, scale, scale, MTXMODE_APPLY);

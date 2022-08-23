@@ -277,11 +277,15 @@ void Gameplay_Init(GameState* thisx) {
     u8 tempSetupIndex;
     s32 pad[2];
 
-    if (gSaveContext.n64ddFlag && Randomizer_GetSettingValue(RSK_SKIP_CHILD_STEALTH)) {
+    // Skip Child Stealth when option is enabled, Zelda's Letter isn't obtained and Impa's reward hasn't been received
+    // eventChkInf[4] & 1 = Got Zelda's Letter
+    // eventChkInf[5] & 0x200 = Got Impa's reward
+    // entranceIndex 0x7A, Castle Courtyard - Day from crawlspace
+    // entranceIndex 0x400, Zelda's Courtyard
+    if (gSaveContext.n64ddFlag && Randomizer_GetSettingValue(RSK_SKIP_CHILD_STEALTH) &&
+        !(gSaveContext.eventChkInf[4] & 1) && !(gSaveContext.eventChkInf[5] & 0x200)) {
         if (gSaveContext.entranceIndex == 0x7A) {
             gSaveContext.entranceIndex = 0x400;
-        } else if (gSaveContext.entranceIndex == 0x296) {
-            gSaveContext.entranceIndex = 0x23D;
         }
     }
 
@@ -302,7 +306,7 @@ void Gameplay_Init(GameState* thisx) {
     Audio_SetExtraFilter(0);
     Quake_Init();
 
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < ARRAY_COUNT(globalCtx->cameraPtrs); i++) {
         globalCtx->cameraPtrs[i] = NULL;
     }
 
@@ -1928,7 +1932,7 @@ void Gameplay_TriggerRespawn(GlobalContext* globalCtx) {
 }
 
 s32 func_800C0CB8(GlobalContext* globalCtx) {
-    return (globalCtx->roomCtx.curRoom.mesh->polygon.type != 1) && (YREG(15) != 0x20) && (YREG(15) != 0x30) &&
+    return (globalCtx->roomCtx.curRoom.meshHeader->base.type != 1) && (YREG(15) != 0x20) && (YREG(15) != 0x30) &&
            (YREG(15) != 0x40) && (globalCtx->sceneNum != SCENE_HAIRAL_NIWA);
 }
 
