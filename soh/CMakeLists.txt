@@ -231,6 +231,8 @@ set(Source_Files__soh
     "soh/z_message_OTR.cpp"
     "soh/z_play_otr.cpp"
     "soh/z_scene_otr.cpp"
+    "uwp/UWPMain.cpp"
+    "uwp/UWPMain.h"
 )
 source_group("Source Files\\soh" FILES ${Source_Files__soh})
 
