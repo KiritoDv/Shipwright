@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+#define strdup _strdup
 #endif
 
 #include "soh/Enhancements/debugconsole.h"
@@ -201,13 +203,6 @@ static const char* actionsTbl[] = {
     gNum7DoActionENGTex,
     gNum8DoActionENGTex,
 };
-
-char* Interface_StrDup(const char *src) {
-    const unsigned len = strlen(src) + 1;
-    char *newstr = malloc(len);
-    if (newstr) memcpy(newstr, src, len);
-    return newstr;
-}
 
 // original name: "alpha_change"
 void Interface_ChangeAlpha(u16 alphaType) {
@@ -2926,7 +2921,7 @@ void Interface_LoadActionLabel(InterfaceContext* interfaceCtx, u16 action, s16 l
         free(segment);
     }
 
-    interfaceCtx->doActionSegment[loadOffset] = Interface_StrDup(action != DO_ACTION_NONE ? doAction : doAction);
+    interfaceCtx->doActionSegment[loadOffset] = strdup(doAction);
     gSegments[7] = interfaceCtx->doActionSegment[loadOffset];
 }
 
@@ -3008,7 +3003,7 @@ void Interface_LoadActionLabelB(PlayState* play, u16 action) {
         free(interfaceCtx->doActionSegment[1]);
     }
 
-    interfaceCtx->doActionSegment[1] = Interface_StrDup(action != DO_ACTION_NONE ? doAction : doAction);;
+    interfaceCtx->doActionSegment[1] = strdup(doAction);;
     osRecvMesg(&interfaceCtx->loadQueue, NULL, OS_MESG_BLOCK);
 
     interfaceCtx->unk_1FA = 1;

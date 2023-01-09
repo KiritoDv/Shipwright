@@ -401,7 +401,6 @@ ExporterTest/ExporterTest.a
 ZAPDUtils/ZAPDUtils.a
 .vscode/
 build/
-cmake-build-*/
 external/
 ZAPDUtils/build/
 ZAPD/BuildInfo.h
