@@ -1,8 +1,16 @@
 #include "global.h"
 #include <textures/do_action_static/do_action_static.h>
+#include <string.h>
 
 void func_80110990(PlayState* play) {
     Map_Destroy(play);
+}
+
+char* fstrdup(const char *src) {
+    const unsigned len = strlen(src) + 1;
+    char *newstr = malloc(len);
+    if (newstr) memcpy(newstr, src, len);
+    return newstr;
 }
 
 void func_801109B0(PlayState* play) {
@@ -41,18 +49,16 @@ void func_801109B0(PlayState* play) {
     DmaMgr_SendRequest1(interfaceCtx->parameterSegment, (uintptr_t)_parameter_staticSegmentRomStart, parameterSize,
                         __FILE__, 162);
 
-    interfaceCtx->doActionSegment = GAMESTATE_ALLOC_MC(&play->state, 0x480);
+    interfaceCtx->doActionSegment = GAMESTATE_ALLOC_MC(&play->state, 3 * sizeof(char*));
 
     osSyncPrintf("ＤＯアクション テクスチャ初期=%x\n", 0x480); // "DO Action Texture Initialization"
     osSyncPrintf("parameter->do_actionSegment=%x\n", interfaceCtx->doActionSegment);
 
     ASSERT(interfaceCtx->doActionSegment != NULL);
 
-    uint32_t attackDoActionTexSize = ResourceMgr_LoadTexSizeByName(gAttackDoActionENGTex);
-    memcpy(interfaceCtx->doActionSegment, ResourceMgr_LoadTexByName(gAttackDoActionENGTex), attackDoActionTexSize);
-    memcpy(interfaceCtx->doActionSegment + (attackDoActionTexSize / 2), ResourceMgr_LoadTexByName(gCheckDoActionENGTex), attackDoActionTexSize);
-
-    memcpy(interfaceCtx->doActionSegment + attackDoActionTexSize, ResourceMgr_LoadTexByName(gReturnDoActionENGTex), ResourceMgr_LoadTexSizeByName(gReturnDoActionENGTex));
+    interfaceCtx->doActionSegment[0] = fstrdup(gAttackDoActionENGTex);
+    interfaceCtx->doActionSegment[1] = fstrdup(gCheckDoActionENGTex);
+    interfaceCtx->doActionSegment[2] = fstrdup(gReturnDoActionENGTex);
 
     interfaceCtx->iconItemSegment = GAMESTATE_ALLOC_MC(
         &play->state, 0x1000 * ARRAY_COUNT(gSaveContext.equips.buttonItems));

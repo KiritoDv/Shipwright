@@ -4,7 +4,6 @@ import os, sys, shutil
 import shutil
 from rom_info import Z64Rom
 import rom_chooser
-import struct
 import subprocess
 import argparse
 
@@ -12,7 +11,7 @@ def BuildOTR(xmlPath, rom, zapd_exe=None):
     shutil.copytree("assets", "Extract/assets")
 
     if not zapd_exe:
-        zapd_exe = "x64\\Release\\ZAPD.exe" if sys.platform == "win32" else "../ZAPDTR/ZAPD.out"
+        zapd_exe = "..\\x64\\Release\\ZAPD.exe" if sys.platform == "win32" else "../ZAPDTR/ZAPD.out"
 
     exec_cmd = [zapd_exe, "ed", "-i", xmlPath, "-b", rom, "-fl", "CFG/filelists",
             "-o", "placeholder", "-osf", "placeholder", "-gsf", "1",

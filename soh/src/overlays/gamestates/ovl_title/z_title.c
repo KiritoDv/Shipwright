@@ -220,12 +220,12 @@ void Title_Draw(TitleContext* this) {
 
     for (idx = 0, y = 94; idx < 16; idx++, y += 2)
     {
-        gDPLoadTextureBlock(POLY_OPA_DISP++, &n64LogoTex[0x180 * idx], G_IM_FMT_I,
-            G_IM_SIZ_8b, 192, 2, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
-            G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-
-        gDPSetTileSize(POLY_OPA_DISP++, 1, this->uls, (this->ult & 0x7F) - idx * 4, 0, 0);
-        gSPTextureRectangle(POLY_OPA_DISP++, 388, y << 2, 1156, (y + 2) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+//        gDPLoadTextureBlock(POLY_OPA_DISP++, &nintendo_rogo_static_Tex_000000[0x180 * idx], G_IM_FMT_I,
+//            G_IM_SIZ_8b, 192, 2, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+//            G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+//
+//        gDPSetTileSize(POLY_OPA_DISP++, 1, this->uls, (this->ult & 0x7F) - idx * 4, 0, 0);
+//        gSPTextureRectangle(POLY_OPA_DISP++, 388, y << 2, 1156, (y + 2) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
     }
 
     Environment_FillScreen(this->state.gfxCtx, 0, 0, 0, (s16)this->coverAlpha, FILL_SCREEN_XLU);

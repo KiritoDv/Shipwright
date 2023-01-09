@@ -1,3 +1,4 @@
+#include <string.h>
 #include "global.h"
 #include "vt.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
@@ -414,7 +415,7 @@ void Map_InitData(PlayState* play, s16 room) {
 
             if (sEntranceIconMapIndex < 24) {
                 const char* textureName = minimapTableOW[sEntranceIconMapIndex];
-                memcpy(play->interfaceCtx.mapSegment, ResourceMgr_LoadTexByName(textureName), ResourceMgr_LoadTexSizeByName(textureName));
+                memcpy(play->interfaceCtx.mapSegment, textureName, strlen(textureName) + 1);
             }
 
             interfaceCtx->unk_258 = mapIndex;
@@ -448,7 +449,7 @@ void Map_InitData(PlayState* play, s16 room) {
                                 //0xFF0, __FILE__, __LINE__);
 
             const char* textureName = minimapTableDangeon[gMapData->dgnMinimapTexIndexOffset[mapIndex] + room];
-            memcpy(play->interfaceCtx.mapSegment, ResourceMgr_LoadTexByName(textureName), ResourceMgr_LoadTexSizeByName(textureName));
+            memcpy(play->interfaceCtx.mapSegment, textureName, strlen(textureName) + 1);
 
             R_COMPASS_OFFSET_X = gMapData->roomCompassOffsetX[mapIndex][room];
             R_COMPASS_OFFSET_Y = gMapData->roomCompassOffsetY[mapIndex][room];
