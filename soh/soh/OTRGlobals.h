@@ -62,7 +62,7 @@ char** ResourceMgr_ListFiles(const char* searchMask, int* resultSize);
 void ResourceMgr_LoadFile(const char* resName);
 char* ResourceMgr_LoadFileFromDisk(const char* filePath);
 char* ResourceMgr_LoadJPEG(char* data, int dataSize);
-char* ResourceMgr_LoadTexByName(const char* texPath);
+char* ResourceMgr_LoadTexDataByName(const char* texPath);
 uint16_t ResourceMgr_LoadTexWidthByName(char* texPath);
 uint16_t ResourceMgr_LoadTexHeightByName(char* texPath);
 uint32_t ResourceMgr_LoadTexSizeByName(char* texPath);
