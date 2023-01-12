@@ -818,7 +818,7 @@ extern "C" char* ResourceMgr_LoadTexOrDListByName(const char* filePath) {
                 Path.replace(pos, 7, "/mq/");
             }
         }
-        return ResourceMgr_LoadTexDataByName(Path.c_str());
+        return strdup(Path.c_str());
     }
 }
 

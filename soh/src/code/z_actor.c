@@ -795,10 +795,6 @@ void func_8002CDE4(PlayState* play, TitleCardContext* titleCtx) {
 
 void TitleCard_InitBossName(PlayState* play, TitleCardContext* titleCtx, void* texture, s16 x, s16 y, u8 width,
                             u8 height, s16 hasTranslation) {
-
-    if (ResourceMgr_OTRSigCheck(texture))
-        texture = ResourceMgr_LoadTexDataByName(texture);
-
     titleCtx->texture = texture;
     titleCtx->isBossCard = true;
     titleCtx->hasTranslation = hasTranslation;
@@ -1019,9 +1015,7 @@ void TitleCard_InitPlaceName(PlayState* play, TitleCardContext* titleCtx, void* 
         texture = newName;
     }
 
-    titleCtx->texture = ResourceMgr_LoadTexDataByName(texture);
-
-    //titleCtx->texture = texture;
+    titleCtx->texture = texture;
     titleCtx->isBossCard = false;
     titleCtx->hasTranslation = false;
     titleCtx->x = x;

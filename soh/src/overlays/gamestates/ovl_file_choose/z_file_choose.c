@@ -111,8 +111,6 @@ void FileChoose_DrawImageRGBA32(GraphicsContext* gfxCtx, s16 centerX, s16 center
 
     OPEN_DISPS(gfxCtx);
 
-    source = ResourceMgr_LoadTexDataByName(source);
-
     curTexture = source;
     rectLeft = centerX - (width / 2);
     rectTop = centerY - (height / 2);

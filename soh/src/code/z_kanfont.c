@@ -174,7 +174,7 @@ void Font_LoadChar(Font* font, u8 character, u16 codePointIndex) {
                         //__FILE__, __LINE__);
 
     if (character < 0x8B)
-        memcpy(&font->charTexBuf[codePointIndex], ResourceMgr_LoadTexDataByName(fntTbl[character]), FONT_CHAR_TEX_SIZE);
+        memcpy(&font->charTexBuf[codePointIndex], fntTbl[character], strlen(fntTbl[character]) + 1);
 }
 
 /**
@@ -183,7 +183,7 @@ void Font_LoadChar(Font* font, u8 character, u16 codePointIndex) {
  * The different icons are given in the MessageBoxIcon enum.
  */
 void Font_LoadMessageBoxIcon(Font* font, u16 icon) {
-    memcpy(font->iconBuf, ResourceMgr_LoadTexDataByName(msgStaticTbl[4 + icon]), FONT_CHAR_TEX_SIZE);
+    memcpy(font->iconBuf, msgStaticTbl[4 + icon], strlen(msgStaticTbl[4 + icon]) + 1);
 }
 
 /**

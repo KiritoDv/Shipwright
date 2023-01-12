@@ -1,5 +1,6 @@
 #include "z_kaleido_scope.h"
 #include <stdlib.h>
+#include <string.h>
 
 #include "textures/item_name_static/item_name_static.h"
 #include "textures/icon_item_static/icon_item_static.h"
@@ -2073,7 +2074,7 @@ void KaleidoScope_UpdateNamePanel(PlayState* play) {
                 }
 
                 const char* textureName = mapNameTextures[sp2A];
-                memcpy(pauseCtx->nameSegment, ResourceMgr_LoadTexDataByName(textureName), ResourceMgr_LoadTexSizeByName(textureName));
+                memcpy(pauseCtx->nameSegment, textureName, strlen(textureName) + 1);
             } else {
                 osSyncPrintf("zoom_name=%d\n", pauseCtx->namedItem);
 
@@ -2087,7 +2088,7 @@ void KaleidoScope_UpdateNamePanel(PlayState* play) {
                 osSyncPrintf("J_N=%d  point=%d\n", gSaveContext.language, sp2A);
 
                 const char* textureName = iconNameTextures[sp2A];
-                memcpy(pauseCtx->nameSegment, ResourceMgr_LoadTexDataByName(textureName), ResourceMgr_LoadTexSizeByName(textureName));
+                memcpy(pauseCtx->nameSegment, textureName, strlen(textureName) + 1);
             }
 
             pauseCtx->nameDisplayTimer = 0;
@@ -3191,8 +3192,8 @@ void KaleidoScope_LoadDungeonMap(PlayState* play) {
     char* firstTextureName = sDungeonMapTexs[R_MAP_TEX_INDEX];
     char* secondTextureName = sDungeonMapTexs[R_MAP_TEX_INDEX + 1];
 
-    memcpy(interfaceCtx->mapSegment, ResourceMgr_LoadTexDataByName(firstTextureName), ResourceMgr_LoadTexSizeByName(firstTextureName));
-    memcpy(interfaceCtx->mapSegment + 0x800, ResourceMgr_LoadTexDataByName(secondTextureName), ResourceMgr_LoadTexSizeByName(secondTextureName));
+    memcpy(interfaceCtx->mapSegment, firstTextureName, sizeof(firstTextureName));
+    memcpy(interfaceCtx->mapSegment + 0x800, secondTextureName, sizeof(secondTextureName));
 }
 
 void KaleidoScope_UpdateDungeonMap(PlayState* play) {
@@ -3371,7 +3372,7 @@ void KaleidoScope_Update(PlayState* play)
             if (((void)0, gSaveContext.worldMapArea) < 22) {
                 if (gSaveContext.language == LANGUAGE_ENG) {
                     const char* textureName = mapNameTextures[36 + gSaveContext.worldMapArea];
-                    memcpy(pauseCtx->nameSegment + 0x400, ResourceMgr_LoadTexDataByName(textureName), ResourceMgr_LoadTexSizeByName(textureName));
+                    memcpy(pauseCtx->nameSegment + 0x400, textureName, strlen(textureName) + 1);
                 } else if (gSaveContext.language == LANGUAGE_GER) {
                     const char* textureName = mapNameTextures[58 + gSaveContext.worldMapArea];
                     memcpy(pauseCtx->nameSegment + 0x400, ResourceMgr_LoadTexDataByName(textureName), ResourceMgr_LoadTexSizeByName(textureName));
