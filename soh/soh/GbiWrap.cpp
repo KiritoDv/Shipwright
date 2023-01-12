@@ -1,3 +1,4 @@
+#include <cstring>
 #include "z64.h"
 
 //OTRTODO - this is awful
