@@ -202,6 +202,8 @@ static const char* actionsTbl[] = {
     gNum8DoActionENGTex,
 };
 
+static const char gDoEmptyTexture[] = "__OTR__virtual/gEmptyTexture";
+
 char* Interface_StrDup(const char *src) {
     const unsigned len = strlen(src) + 1;
     char *newstr = malloc(len);
@@ -2935,7 +2937,7 @@ void Interface_LoadActionLabel(InterfaceContext* interfaceCtx, u16 action, s16 l
         free(segment);
     }
 
-    interfaceCtx->doActionSegment[loadOffset] = Interface_StrDup(action != DO_ACTION_NONE ? doAction : doAction);
+    interfaceCtx->doActionSegment[loadOffset] = Interface_StrDup(action != DO_ACTION_NONE ? doAction : gDoEmptyTexture);
     gSegments[7] = interfaceCtx->doActionSegment[loadOffset];
 }
 
@@ -3017,7 +3019,7 @@ void Interface_LoadActionLabelB(PlayState* play, u16 action) {
         free(interfaceCtx->doActionSegment[1]);
     }
 
-    interfaceCtx->doActionSegment[1] = Interface_StrDup(action != DO_ACTION_NONE ? doAction : doAction);;
+    interfaceCtx->doActionSegment[1] = Interface_StrDup(action != DO_ACTION_NONE ? doAction : gDoEmptyTexture);
     osRecvMesg(&interfaceCtx->loadQueue, NULL, OS_MESG_BLOCK);
 
     interfaceCtx->unk_1FA = 1;
@@ -4936,8 +4938,8 @@ void Interface_Draw(PlayState* play) {
     OPEN_DISPS(play->state.gfxCtx);
 
     // Invalidate Do Action textures as they may have changed
-    gSPInvalidateTexCache(OVERLAY_DISP++, interfaceCtx->doActionSegment[0]);
-    gSPInvalidateTexCache(OVERLAY_DISP++, interfaceCtx->doActionSegment[1]);
+//    gSPInvalidateTexCache(OVERLAY_DISP++, interfaceCtx->doActionSegment[0]);
+//    gSPInvalidateTexCache(OVERLAY_DISP++, interfaceCtx->doActionSegment[1]);
 
     gSPSegment(OVERLAY_DISP++, 0x02, interfaceCtx->parameterSegment);
     gSPSegment(OVERLAY_DISP++, 0x07, interfaceCtx->doActionSegment);
