@@ -4937,10 +4937,6 @@ void Interface_Draw(PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx);
 
-    // Invalidate Do Action textures as they may have changed
-//    gSPInvalidateTexCache(OVERLAY_DISP++, interfaceCtx->doActionSegment[0]);
-//    gSPInvalidateTexCache(OVERLAY_DISP++, interfaceCtx->doActionSegment[1]);
-
     gSPSegment(OVERLAY_DISP++, 0x02, interfaceCtx->parameterSegment);
     gSPSegment(OVERLAY_DISP++, 0x07, interfaceCtx->doActionSegment);
     gSPSegment(OVERLAY_DISP++, 0x08, interfaceCtx->iconItemSegment);

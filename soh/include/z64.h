@@ -738,7 +738,7 @@ typedef struct {
     /* 0x0130 */ u8*    parameterSegment;
     /* 0x0134 */ char**  doActionSegment;
     /* 0x0138 */ u8*    iconItemSegment;
-    /* 0x013C */ u8*    mapSegment;
+    /* 0x013C */ char** mapSegment;
     /* 0x0140 */ u8     mapPalette[32];
     /* 0x0160 */ DmaRequest dmaRequest_160;
     /* 0x0180 */ DmaRequest dmaRequest_180;
