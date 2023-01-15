@@ -3185,13 +3185,13 @@ void KaleidoScope_UpdateDungeonMap(PlayState* play) {
 
     if ((play->sceneNum >= SCENE_YDAN) && (play->sceneNum <= SCENE_TAKARAYA)) {
         if ((VREG(30) + 3) == pauseCtx->cursorPoint[PAUSE_MAP]) {
-             KaleidoScope_OverridePalIndexCI4(interfaceCtx->mapSegment[0], 2040, interfaceCtx->mapPaletteIndex, 14);
+             KaleidoScope_OverridePalIndexCI4(interfaceCtx->mapSegment[0], interfaceCtx->mapPaletteIndex, 14);
         }
     }
 
     if ((play->sceneNum >= SCENE_YDAN) && (play->sceneNum <= SCENE_TAKARAYA)) {
         if ((VREG(30) + 3) == pauseCtx->cursorPoint[PAUSE_MAP]) {
-             KaleidoScope_OverridePalIndexCI4(interfaceCtx->mapSegment[1], 2040, interfaceCtx->mapPaletteIndex, 14);
+             KaleidoScope_OverridePalIndexCI4(interfaceCtx->mapSegment[1], interfaceCtx->mapPaletteIndex, 14);
         }
     }
 }
