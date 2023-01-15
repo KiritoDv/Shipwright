@@ -820,13 +820,17 @@ Gfx* KaleidoScope_QuadTextureIA8(Gfx* gfx, void* texture, s16 width, s16 height,
     return gfx;
 }
 
-void KaleidoScope_OverridePalIndexCI4(u8* texture, ptrdiff_t size, s32 targetIndex, s32 newIndex) {
+void KaleidoScope_OverridePalIndexCI4(u8* texture, s32 targetIndex, s32 newIndex) {
     s32 i;
 
     targetIndex &= 0xF;
     newIndex &= 0xF;
 
-    if ((size == 0) || (targetIndex == newIndex) || (texture == NULL)) {
+    size_t size = ResourceMgr_LoadTexSizeByName(texture);
+    uint8_t* src = ResourceMgr_LoadTexDataByName(texture);
+    uint8_t* modifier = malloc(size);
+
+    if ((size == 0) || (targetIndex == newIndex) || (modifier == NULL)) {
         return;
     }
 
@@ -834,7 +838,7 @@ void KaleidoScope_OverridePalIndexCI4(u8* texture, ptrdiff_t size, s32 targetInd
         s32 index1;
         s32 index2;
 
-        index1 = index2 = texture[i];
+        index1 = index2 = src[i];
 
         index1 = (index1 >> 4) & 0xF;
         index2 = index2 & 0xF;
@@ -847,8 +851,10 @@ void KaleidoScope_OverridePalIndexCI4(u8* texture, ptrdiff_t size, s32 targetInd
             index2 = newIndex;
         }
 
-        texture[i] = (index1 << 4) | index2;
+        modifier[i] = (index1 << 4) | index2;
     }
+
+    ResourceMgr_RegisterTexModifier(texture, modifier);
 }
 
 void KaleidoScope_MoveCursorToSpecialPos(PlayState* play, u16 specialPos) {
@@ -3179,13 +3185,13 @@ void KaleidoScope_UpdateDungeonMap(PlayState* play) {
 
     if ((play->sceneNum >= SCENE_YDAN) && (play->sceneNum <= SCENE_TAKARAYA)) {
         if ((VREG(30) + 3) == pauseCtx->cursorPoint[PAUSE_MAP]) {
-            // KaleidoScope_OverridePalIndexCI4(interfaceCtx->mapSegment[0], 2040, interfaceCtx->mapPaletteIndex, 14);
+             KaleidoScope_OverridePalIndexCI4(interfaceCtx->mapSegment[0], 2040, interfaceCtx->mapPaletteIndex, 14);
         }
     }
 
     if ((play->sceneNum >= SCENE_YDAN) && (play->sceneNum <= SCENE_TAKARAYA)) {
         if ((VREG(30) + 3) == pauseCtx->cursorPoint[PAUSE_MAP]) {
-            // KaleidoScope_OverridePalIndexCI4(interfaceCtx->mapSegment[1], 2040, interfaceCtx->mapPaletteIndex, 14);
+             KaleidoScope_OverridePalIndexCI4(interfaceCtx->mapSegment[1], 2040, interfaceCtx->mapPaletteIndex, 14);
         }
     }
 }
