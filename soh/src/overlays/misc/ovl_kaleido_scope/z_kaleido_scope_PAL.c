@@ -3040,31 +3040,6 @@ uint32_t _bswap32(uint32_t a)
     return a;
 }
 
-void KaleidoScope_GrayOutTextureRGBA32(u32* texture, u16 pixelCount) {
-    u32 rgb;
-    u16 gray;
-    u16 i;
-
-    texture = ResourceMgr_LoadTexDataByName(texture);
-
-    for (i = 0; i < pixelCount; i++) {
-        uint32_t px = texture[i];
-        if ((px & 0xFFFFFF00) != 0) {
-            u8 a = (px & 0xFF000000) >> 24;
-            u8 b = (px & 0x00FF0000) >> 16;
-            u8 g = (px & 0x0000FF00) >> 8;
-            u8 r = (px & 0x000000FF) >> 0;
-            gray = (r + g + b) / 7;
-
-            r = gray;
-            g = gray;
-            b = gray;
-
-            texture[i] = (a << 24) + (b << 16) + (g << 8) + (r << 0);
-        }
-    }
-}
-
 void func_808265BC(PlayState* play) {
     PauseContext* pauseCtx = &play->pauseCtx;
 
