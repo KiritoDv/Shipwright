@@ -812,207 +812,531 @@ void TitleCard_InitPlaceName(PlayState* play, TitleCardContext* titleCtx, void* 
   //  size_t size = loadedScene->titleFile.vromEnd - loadedScene->titleFile.vromStart;
     switch (play->sceneNum) {
         case SCENE_YDAN:
-            texture = gDekuTreeTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gDekuTreeTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gDekuTreeTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gDekuTreeTitleCardGERTex;
+            }
             break;
         case SCENE_DDAN:
-            texture = gDodongosCavernTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gDodongosCavernTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gDodongosCavernTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gDodongosCavernTitleCardGERTex;
+            }
             break;
         case SCENE_BDAN:
-            texture = gJabuJabuTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gJabuJabuTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gJabuJabuTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gJabuJabuTitleCardGERTex;
+            }
             break;
         case SCENE_BMORI1:
-            texture = gForestTempleTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gForestTempleTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gForestTempleTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gForestTempleTitleCardGERTex;
+            }
             break;
         case SCENE_HIDAN:
-            texture = gFireTempleTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gFireTempleTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gFireTempleTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gFireTempleTitleCardGERTex;
+            }
             break;
         case SCENE_MIZUSIN:
-            texture = gWaterTempleTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gWaterTempleTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gWaterTempleTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gWaterTempleTitleCardGERTex;
+            }
             break;
         case SCENE_JYASINZOU:
-            texture = gSpiritTempleTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gSpiritTempleTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gSpiritTempleTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gSpiritTempleTitleCardGERTex;
+            }
             break;
         case SCENE_HAKADAN:
-            texture = gShadowTempleTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gShadowTempleTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gShadowTempleTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gShadowTempleTitleCardGERTex;
+            }
             break;
         case SCENE_HAKADANCH:
-            texture = gBottomOfTheWellTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gBottomOfTheWellTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gBottomOfTheWellTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gBottomOfTheWellTitleCardGERTex;
+            }
             break;
         case SCENE_ICE_DOUKUTO:
-            texture = gIceCavernTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gIceCavernTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gIceCavernTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gIceCavernTitleCardGERTex;
+            }
             break;
         case SCENE_MEN:
-            texture = gGERudoTrainingGroundTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gGERudoTrainingGroundTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gGERudoTrainingGroundTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gGERudoTrainingGroundTitleCardGERTex;
+            }
             break;
         case SCENE_GERUDOWAY:
-            texture = gThievesHideoutTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gThievesHideoutTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gThievesHideoutTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gThievesHideoutTitleCardGERTex;
+            }
             break;
         case SCENE_GANON_TOU:
-            texture = gGanonsCastleTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gGanonsCastleTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gGanonsCastleTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gGanonsCastleTitleCardGERTex;
+            }
             break;
         case SCENE_GANONTIKA:
-            texture = gInsideGanonsCastleTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gInsideGanonsCastleTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gInsideGanonsCastleTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gInsideGanonsCastleTitleCardGERTex;
+            }
             break;
         case SCENE_TAKARAYA:
-            texture = gTreasureBoxShopTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gTreasureBoxShopTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gTreasureBoxShopTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gTreasureBoxShopTitleCardGERTex;
+            }
             break;
         case SCENE_MARKET_ALLEY:
         case SCENE_MARKET_ALLEY_N:
-            texture = gBackAlleyTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gBackAlleyTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gBackAlleyTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gBackAlleyTitleCardGERTex;
+            }
             break;
         case SCENE_MARKET_DAY:
         case SCENE_MARKET_NIGHT:
         case SCENE_MARKET_RUINS:
-            texture = gMarketTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gMarketTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gMarketTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gMarketTitleCardGERTex;
+            }
             break;
         case SCENE_SHOP1:
-            texture = gBazaarTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gBazaarTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gBazaarTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gBazaarTitleCardGERTex;
+            }
             break;
         case SCENE_KOKIRI_SHOP:
-            texture = gKokiriShopTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gKokiriShopTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gKokiriShopTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gKokiriShopTitleCardGERTex;
+            }
             break;
         case SCENE_GOLON:
-            texture = gGoronShopTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gGoronShopTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gGoronShopTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gGoronShopTitleCardGERTex;
+            }
             break;
         case SCENE_ZOORA:
-            texture = gZoraShopTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gZoraShopTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gZoraShopTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gZoraShopTitleCardGERTex;
+            }
             break;
         case SCENE_NIGHT_SHOP:
-            texture = gBombchuShopTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gBombchuShopTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gBombchuShopTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gBombchuShopTitleCardGERTex;
+            }
             break;
         case SCENE_DRAG:
         case SCENE_MAHOUYA:
         case SCENE_ALLEY_SHOP:
-            texture = gPotionShopTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gPotionShopTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gPotionShopTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gPotionShopTitleCardGERTex;
+            }
             break;
         case SCENE_FACE_SHOP:
-            texture = gHappyMaskShopTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gHappyMaskShopTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gHappyMaskShopTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gHappyMaskShopTitleCardGERTex;
+            }
             break;
         case SCENE_MALON_STABLE:
-            texture = gStableTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gStableTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gStableTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gStableTitleCardGERTex;
+            }
             break;
         case SCENE_HYLIA_LABO:
-            texture = gLakeHyliaTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gLakeHyliaTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gLakeHyliaTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gLakeHyliaTitleCardGERTex;
+            }
             break;
         case SCENE_HUT:
-            texture = gGravekeepersHutTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gGravekeepersHutTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gGravekeepersHutTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gGravekeepersHutTitleCardGERTex;
+            }
             break;
         case SCENE_DAIYOUSEI_IZUMI:
         case SCENE_YOUSEI_IZUMI_YOKO:
-            texture = gGreatFairysFountainTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gGreatFairysFountainTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gGreatFairysFountainTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gGreatFairysFountainTitleCardGERTex;
+            }
             break;
         case SCENE_YOUSEI_IZUMI_TATE:
-            texture = gFairysFountainTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gFairysFountainTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gFairysFountainTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gFairysFountainTitleCardGERTex;
+            }
             break;
         case SCENE_HAKAANA_OUKE:
-            texture = gRoyalFamilysTombTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gRoyalFamilysTombTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gRoyalFamilysTombTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gRoyalFamilysTombTitleCardGERTex;
+            }
             break;
         case SCENE_SYATEKIJYOU:
-            texture = gShootingGalleryTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gShootingGalleryTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gShootingGalleryTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gShootingGalleryTitleCardGERTex;
+            }
             break;
         case SCENE_TOKINOMA:
-            texture = gTempleOfTimeTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gTempleOfTimeTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gTempleOfTimeTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gTempleOfTimeTitleCardGERTex;
+            }
             break;
         case SCENE_KENJYANOMA:
-            texture = gChamberOfTheSagesTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gChamberOfTheSagesTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gChamberOfTheSagesTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gChamberOfTheSagesTitleCardGERTex;
+            }
             break;
         case SCENE_HAIRAL_NIWA:
         case SCENE_HAIRAL_NIWA_N:
         case SCENE_NAKANIWA:
         case SCENE_HAIRAL_NIWA2:
-            texture = gCastleCourtyardTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gCastleCourtyardTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gCastleCourtyardTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gCastleCourtyardTitleCardGERTex;
+            }
             break;
         case SCENE_HAKASITARELAY:
-            texture = gQuestionMarkTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gQuestionMarkTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gQuestionMarkTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gQuestionMarkTitleCardGERTex;
+            }
             break;
         case SCENE_TURIBORI:
-            texture = gFishingPondTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gFishingPondTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gFishingPondTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gFishingPondTitleCardGERTex;
+            }
             break;
         case SCENE_BOWLING:
-            texture = gBombchuBowlingAlleyCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gBombchuBowlingAlleyCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gBombchuBowlingAlleyCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gBombchuBowlingAlleyCardGERTex;
+            }
             break;
         case SCENE_KINSUTA:
-            texture = gHouseOfSkulltulaTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gHouseOfSkulltulaTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gHouseOfSkulltulaTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gHouseOfSkulltulaTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT00:
-            texture = gHyruleFieldTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gHyruleFieldTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gHyruleFieldTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gHyruleFieldTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT01:
-            texture = gKakarikoVillageTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gKakarikoVillageTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gKakarikoVillageTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gKakarikoVillageTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT02:
-            texture = gGraveyardTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gGraveyardTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gGraveyardTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gGraveyardTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT03:
-            texture = gZorasRiverTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gZorasRiverTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gZorasRiverTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gZorasRiverTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT04:
-            texture = gKokiriForestTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gKokiriForestTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gKokiriForestTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gKokiriForestTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT05:
-            texture = gSacredForestMeadowTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gSacredForestMeadowTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gSacredForestMeadowTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gSacredForestMeadowTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT06:
-            texture = gLakeHyliaTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gLakeHyliaTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gLakeHyliaTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gLakeHyliaTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT07:
-            texture = gZorasDomainTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gZorasDomainTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gZorasDomainTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gZorasDomainTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT08:
-            texture = gZorasFountainTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gZorasFountainTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gZorasFountainTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gZorasFountainTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT09:
-            texture = gGERudoValleyTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gGERudoValleyTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gGERudoValleyTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gGERudoValleyTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT10:
-            texture = gLostWoodsTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gLostWoodsTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gLostWoodsTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gLostWoodsTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT11:
-            texture = gDesertColossusTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gDesertColossusTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gDesertColossusTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gDesertColossusTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT12:
-            texture = gGERudosFortressTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gGERudosFortressTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gGERudosFortressTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gGERudosFortressTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT13:
-            texture = gHauntedWastelandTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gHauntedWastelandTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gHauntedWastelandTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gHauntedWastelandTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT15:
-            texture = gHyruleCastleTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gHyruleCastleTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gHyruleCastleTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gHyruleCastleTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT16:
-            texture = gDeathMountainTrailTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gDeathMountainTrailTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gDeathMountainTrailTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gDeathMountainTrailTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT17:
-            texture = gDeathMountainCraterTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gDeathMountainCraterTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gDeathMountainCraterTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gDeathMountainCraterTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT18:
-            texture = gGoronCityTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gGoronCityTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gGoronCityTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gGoronCityTitleCardGERTex;
+            }
             break;
         case SCENE_SPOT20:
-            texture = gLonLonRanchTitleCardENGTex;
+            if (gSaveContext.language == LANGUAGE_ENG) {
+                texture = gLonLonRanchTitleCardENGTex;
+            } else if (gSaveContext.language == LANGUAGE_FRA) {
+                texture = gLonLonRanchTitleCardFRATex;
+            } else if (gSaveContext.language == LANGUAGE_GER) {
+                texture = gLonLonRanchTitleCardGERTex;
+            }
             break;
         default:
             titleCtx->texture = NULL;
             return;
 
-    }
-
-    char newName[512];
-
-    if (gSaveContext.language != LANGUAGE_ENG) {
-        size_t length = strlen(texture);
-        strcpy(newName, texture);
-        if (gSaveContext.language == LANGUAGE_FRA) {
-            newName[length - 6] = 'F';
-            newName[length - 5] = 'R';
-            newName[length - 4] = 'A';
-        }
-        else if (gSaveContext.language == LANGUAGE_GER) {
-            newName[length - 6] = 'G';
-            newName[length - 5] = 'E';
-            newName[length - 4] = 'R';
-        }
-        texture = newName;
     }
 
     titleCtx->texture = texture;
