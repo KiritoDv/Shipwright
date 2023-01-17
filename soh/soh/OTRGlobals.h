@@ -67,7 +67,6 @@ uint16_t ResourceMgr_LoadTexWidthByName(char* texPath);
 uint16_t ResourceMgr_LoadTexHeightByName(char* texPath);
 uint32_t ResourceMgr_LoadTexSizeByName(char* texPath);
 void ResourceMgr_LoadTextureSizeByName(char* texPath, uint16_t* width, uint16_t* height);
-void ResourceMgr_RegisterTexModifier(char* texPath, uint8_t* modifier);
 char* ResourceMgr_LoadTexOrDListByName(const char* filePath);
 char* ResourceMgr_LoadPlayerAnimByName(const char* animPath);
 AnimationHeaderCommon* ResourceMgr_LoadAnimByName(const char* path);
