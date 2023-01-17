@@ -643,7 +643,7 @@ void EnMag_DrawInnerMq(Actor* thisx, PlayState* play, Gfx** gfxp) {
     u16 rectTop;
     u16 length;
     int lang = LANGUAGE_ENG;
-    if (CVar_GetS32("gTitleScreenTranslation", 0)) {
+    if (CVarGetInteger("gTitleScreenTranslation", 0)) {
         lang = gSaveContext.language;
     }
 
@@ -838,7 +838,7 @@ void EnMag_DrawInnerVanilla(Actor* thisx, PlayState* play, Gfx** gfxp) {
     u16 rectTop;
     u16 length;
     int lang = LANGUAGE_ENG;
-    if (CVar_GetS32("gTitleScreenTranslation", 0)) {
+    if (CVarGetInteger("gTitleScreenTranslation", 0)) {
         lang = gSaveContext.language;
     }
 
