@@ -795,7 +795,7 @@ extern "C" char* ResourceMgr_LoadJPEG(char* data, int dataSize)
     return (char*)finalBuffer;
 }
 
-extern "C" char* ResourceMgr_LoadTexByName(const char* texPath);
+extern "C" char* ResourceMgr_LoadTexDataByName(const char* texPath);
 
 extern "C" uint16_t ResourceMgr_LoadTexWidthByName(char* texPath);
 
@@ -818,7 +818,7 @@ extern "C" char* ResourceMgr_LoadTexOrDListByName(const char* filePath) {
                 Path.replace(pos, 7, "/mq/");
             }
         }
-        return ResourceMgr_LoadTexByName(Path.c_str());
+        return strdup(Path.c_str());
     }
 }
 
