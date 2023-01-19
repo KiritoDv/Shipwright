@@ -503,7 +503,7 @@ void FileChoose_UpdateMainMenu(GameState* thisx) {
                 this->logoAlpha = 0;
             } else if(!FileChoose_IsSaveCompatible(Save_GetSaveMetaInfo(this->buttonIndex))) {
                 Audio_PlaySoundGeneral(NA_SE_SY_FSEL_ERROR, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
-            }  
+            }
             else {
                 Audio_PlaySoundGeneral(NA_SE_SY_FSEL_DECIDE_L, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
                 this->actionTimer = 8;
@@ -664,7 +664,7 @@ void FileChoose_UpdateQuestMenu(GameState* thisx) {
         if (this->stickRelX > 30 || (dpad && CHECK_BTN_ANY(input->press.button, BTN_DRIGHT))) {
             this->questType[this->buttonIndex] += 1;
             if (this->questType[this->buttonIndex] == MASTER_QUEST && !ResourceMgr_GameHasMasterQuest()) {
-                // the only case not handled by the MIN/MAX_QUEST logic below. This will either put it at 
+                // the only case not handled by the MIN/MAX_QUEST logic below. This will either put it at
                 // above MAX_QUEST in which case it will wrap back around, or it will put it on MAX_QUEST
                 // in which case if MAX_QUEST even is that number it will be a valid selection that won't
                 // crash.
@@ -780,7 +780,7 @@ void FileChoose_RotateToOptions(GameState* thisx) {
  */
 void FileChoose_RotateToMain(GameState* thisx) {
     FileChooseContext* this = (FileChooseContext*)thisx;
-    if (this->configMode == CM_QUEST_TO_MAIN || (MIN_QUEST == MAX_QUEST && this->configMode == CM_NAME_ENTRY_TO_MAIN && this->prevConfigMode != CM_MAIN_MENU) || 
+    if (this->configMode == CM_QUEST_TO_MAIN || (MIN_QUEST == MAX_QUEST && this->configMode == CM_NAME_ENTRY_TO_MAIN && this->prevConfigMode != CM_MAIN_MENU) ||
         this->configMode == CM_OPTIONS_TO_MAIN) {
         this->windowRot -= VREG(16);
 
@@ -1388,11 +1388,11 @@ const char* FileChoose_GetQuestChooseTitleTexName(Language lang) {
     switch (lang) {
         case LANGUAGE_ENG:
         default:
-            return "assets/textures/title_static/gFileSelPleaseChooseAQuestENGTex";
+            return "__OTR__textures/title_static/gFileSelPleaseChooseAQuestENGTex";
         case LANGUAGE_FRA:
-            return "assets/textures/title_static/gFileSelPleaseChooseAQuestFRATex";
+            return "__OTR__textures/title_static/gFileSelPleaseChooseAQuestFRATex";
         case LANGUAGE_GER:
-            return "assets/textures/title_static/gFileSelPleaseChooseAQuestGERTex";
+            return "__OTR__textures/title_static/gFileSelPleaseChooseAQuestGERTex";
     }
 }
 
@@ -1408,10 +1408,10 @@ void FileChoose_DrawWindowContents(GameState* thisx) {
     s16 quadVtxIndex;
     s16 isActive;
     s16 pad;
-    char* tex = (this->configMode == CM_QUEST_MENU || this->configMode == CM_ROTATE_TO_NAME_ENTRY || 
+    char* tex = (this->configMode == CM_QUEST_MENU || this->configMode == CM_ROTATE_TO_NAME_ENTRY ||
         this->configMode == CM_START_QUEST_MENU || this->configMode == CM_QUEST_TO_MAIN ||
         this->configMode == CM_NAME_ENTRY_TO_QUEST_MENU)
-                  ? ResourceMgr_LoadFileRaw(FileChoose_GetQuestChooseTitleTexName(gSaveContext.language))
+                  ? FileChoose_GetQuestChooseTitleTexName(gSaveContext.language)
                   : sTitleLabels[gSaveContext.language][this->titleLabel];
 
     OPEN_DISPS(this->state.gfxCtx);
@@ -1429,7 +1429,7 @@ void FileChoose_DrawWindowContents(GameState* thisx) {
     gSP1Quadrangle(POLY_OPA_DISP++, 0, 2, 3, 1, 0);
 
     // draw next title label
-    if ((this->configMode == CM_QUEST_MENU) || (this->configMode == CM_START_QUEST_MENU) || 
+    if ((this->configMode == CM_QUEST_MENU) || (this->configMode == CM_START_QUEST_MENU) ||
         this->configMode == CM_NAME_ENTRY_TO_QUEST_MENU) {
         // draw control stick prompts.
         if (MIN_QUEST != MAX_QUEST) {
@@ -1474,7 +1474,7 @@ void FileChoose_DrawWindowContents(GameState* thisx) {
                 FileChoose_DrawImageRGBA32(this->state.gfxCtx, 160, 135, gTitleZeldaShieldLogoMQTex, 160, 160);
                 FileChoose_DrawImageRGBA32(this->state.gfxCtx, 182, 180, "__OTR__objects/object_mag/gTitleMasterQuestSubtitleTex", 128, 32);
                 break;
-            
+
             case RANDOMIZER_QUEST:
                 DrawSeedHashSprites(this);
                 gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, this->logoAlpha);
@@ -1556,8 +1556,7 @@ void FileChoose_DrawWindowContents(GameState* thisx) {
                                     sWindowContentColors[isActive][1], sWindowContentColors[isActive][2],
                                     this->nameAlpha[i]);
                 }
-                gDPLoadTextureBlock(POLY_OPA_DISP++,
-                                    ResourceMgr_LoadFileRaw("assets/textures/title_static/gFileSelRANDButtonTex"),
+                gDPLoadTextureBlock(POLY_OPA_DISP++, "__OTR__textures/title_static/gFileSelRANDButtonTex",
                                     G_IM_FMT_IA, G_IM_SIZ_16b, 44, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
                                     G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
                 gSP1Quadrangle(POLY_OPA_DISP++, 8, 10, 11, 9, 0);
@@ -1574,7 +1573,7 @@ void FileChoose_DrawWindowContents(GameState* thisx) {
                                     this->nameAlpha[i]);
                 }
                 gDPLoadTextureBlock(POLY_OPA_DISP++,
-                                    ResourceMgr_LoadFileRaw("assets/textures/title_static/gFileSelMQButtonTex"),
+                                    "__OTR__textures/title_static/gFileSelMQButtonTex",
                                     G_IM_FMT_IA, G_IM_SIZ_16b, 44, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
                                     G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
                 gSP1Quadrangle(POLY_OPA_DISP++, 8, 10, 11, 9, 0);
@@ -1720,7 +1719,7 @@ void FileChoose_ConfigModeDraw(GameState* thisx) {
         Matrix_Scale(0.78f, 0.78f, 0.78f, MTXMODE_APPLY);
 
         if (this->windowRot != 0) {
-            if (this->configMode == CM_ROTATE_TO_QUEST_MENU || 
+            if (this->configMode == CM_ROTATE_TO_QUEST_MENU ||
                 (this->configMode >= CM_MAIN_TO_OPTIONS && this->configMode <= CM_OPTIONS_TO_MAIN) ||
                 MIN_QUEST == MAX_QUEST || this->configMode == CM_QUEST_TO_MAIN) {
                 Matrix_RotateX(this->windowRot / 100.0f, MTXMODE_APPLY);
@@ -1808,7 +1807,7 @@ void FileChoose_ConfigModeDraw(GameState* thisx) {
     }
 
     // draw quest menu
-    if ((this->configMode == CM_QUEST_MENU) || (this->configMode == CM_ROTATE_TO_QUEST_MENU) || 
+    if ((this->configMode == CM_QUEST_MENU) || (this->configMode == CM_ROTATE_TO_QUEST_MENU) ||
         (this->configMode == CM_ROTATE_TO_NAME_ENTRY) || this->configMode == CM_QUEST_TO_MAIN ||
         this->configMode == CM_NAME_ENTRY_TO_QUEST_MENU) {
         // window
