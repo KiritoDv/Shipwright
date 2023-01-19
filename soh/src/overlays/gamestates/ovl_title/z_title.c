@@ -195,8 +195,6 @@ void Title_Draw(TitleContext* this) {
     v1.z = 0;
     v2.z = 1119.0837;
 
-    char* n64LogoTex = GetResourceDataByName(nintendo_rogo_static_Tex_000000, false);
-
     func_8002EABC(&v1, &v2, &v3, this->state.gfxCtx);
     gSPSetLights1(POLY_OPA_DISP++, sTitleLights);
     Title_SetupView(this, 0, 150.0, 300.0);
@@ -225,15 +223,14 @@ void Title_Draw(TitleContext* this) {
     gDPLoadMultiBlock(POLY_OPA_DISP++, nintendo_rogo_static_Tex_001800, 0x100, 1, G_IM_FMT_I, G_IM_SIZ_8b, 32, 32, 0,
         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, 2, 11);
 
-    for (idx = 0, y = 94; idx < 16; idx++, y += 2)
-    {
-        gDPLoadTextureBlock(POLY_OPA_DISP++, &n64LogoTex[0x180 * idx], G_IM_FMT_I,
-            G_IM_SIZ_8b, 192, 2, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
-            G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+    uint16_t rogoWidth = 192;
+    uint16_t rogoHeight = 32;
 
-        gDPSetTileSize(POLY_OPA_DISP++, 1, this->uls, (this->ult & 0x7F) - idx * 4, 0, 0);
-        gSPTextureRectangle(POLY_OPA_DISP++, 388, y << 2, 1156, (y + 2) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
-    }
+    gDPLoadTextureBlock(POLY_OPA_DISP++, nintendo_rogo_static_Tex_000000, G_IM_FMT_I, G_IM_SIZ_8b, rogoWidth, rogoHeight, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+
+    gSPTextureRectangle(POLY_OPA_DISP++, 388, 94 << 2, 1156, (94 + rogoHeight) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+
+    Environment_FillScreen(this->state.gfxCtx, 0, 0, 0, (s16)this->coverAlpha, FILL_SCREEN_XLU);
 
     // Draw ice cube around N64 logo.
     if (CVarGetInteger("gLetItSnow", 0)) {
