@@ -628,7 +628,7 @@ typedef struct {
     /* 0x0000 */ uintptr_t    msgOffset;
     /* 0x0004 */ u32          msgLength;
     /* 0x0008 */ u8           charTexBuf[FONT_CHAR_TEX_SIZE * 320];
-    /* 0x3C08 */ u8           iconBuf[FONT_CHAR_TEX_SIZE];
+    /* 0x3C08 */ u8           iconBuf[FONT_CHAR_TEX_SIZE * 120];
     /* 0x3C88 */ u8           fontBuf[FONT_CHAR_TEX_SIZE * 320];
     union {
          /* 0xDC88 */ char   msgBuf[1280];
