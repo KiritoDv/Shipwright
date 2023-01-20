@@ -841,7 +841,7 @@ extern "C" uint16_t ResourceMgr_LoadTexWidthByName(char* texPath);
 
 extern "C" uint16_t ResourceMgr_LoadTexHeightByName(char* texPath);
 
-extern "C" char* ResourceMgr_LoadTexOrDListByName(const char* filePath) {
+extern "C" char* ResourceMgr_LoadTexOrDListByName(const char* filePath, bool forceData) {
     auto res = ResourceMgr_LoadResource(filePath);
 
     if (res->Type == Ship::ResourceType::DisplayList)
@@ -856,7 +856,7 @@ extern "C" char* ResourceMgr_LoadTexOrDListByName(const char* filePath) {
                 Path.replace(pos, 7, "/mq/");
             }
         }
-        return strdup(Path.c_str());
+        return forceData ? (char*)GetResourceDataByName(Path.c_str(), false) : strdup(Path.c_str());
     }
 }
 
