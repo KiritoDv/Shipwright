@@ -65,6 +65,7 @@ char* ResourceMgr_LoadJPEG(char* data, int dataSize);
 uint16_t ResourceMgr_LoadTexWidthByName(char* texPath);
 uint16_t ResourceMgr_LoadTexHeightByName(char* texPath);
 char* ResourceMgr_LoadTexOrDListByName(const char* filePath, bool forceData);
+char* GetResourceDataByNameHandlingMQ(const char* filePath, bool now);
 char* ResourceMgr_LoadPlayerAnimByName(const char* animPath);
 AnimationHeaderCommon* ResourceMgr_LoadAnimByName(const char* path);
 char* ResourceMgr_GetNameByCRC(uint64_t crc, char* alloc);

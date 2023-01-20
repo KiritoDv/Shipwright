@@ -841,7 +841,7 @@ extern "C" uint16_t ResourceMgr_LoadTexWidthByName(char* texPath);
 
 extern "C" uint16_t ResourceMgr_LoadTexHeightByName(char* texPath);
 
-extern "C" char* ResourceMgr_LoadTexOrDListByName(const char* filePath, bool forceData) {
+extern "C" char* ResourceMgr_LoadTexOrDListByName(const char* filePath) {
     auto res = ResourceMgr_LoadResource(filePath);
 
     if (res->Type == Ship::ResourceType::DisplayList)
@@ -856,8 +856,20 @@ extern "C" char* ResourceMgr_LoadTexOrDListByName(const char* filePath, bool for
                 Path.replace(pos, 7, "/mq/");
             }
         }
-        return forceData ? (char*)GetResourceDataByName(Path.c_str(), false) : strdup(Path.c_str());
+        return strdup(Path.c_str());
     }
+}
+
+extern "C" char* GetResourceDataByNameHandlingMQ(const char* filePath, bool now) {
+    std::string Path = filePath;
+    if (ResourceMgr_IsGameMasterQuest()) {
+        size_t pos = 0;
+        if ((pos = Path.find("/nonmq/", 0)) != std::string::npos) {
+            Path.replace(pos, 7, "/mq/");
+        }
+    }
+
+    return (char*)GetResourceDataByName(Path.c_str(), now);
 }
 
 extern "C" Sprite* GetSeedTexture(uint8_t index) {
