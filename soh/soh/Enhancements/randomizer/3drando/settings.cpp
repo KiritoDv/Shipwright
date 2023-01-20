@@ -89,6 +89,7 @@ namespace Settings {
   uint8_t ResolvedStartingAge;
   Option ShuffleEntrances          = Option::Bool("Shuffle Entrances",      {"Off", "On"},                                                     {shuffleEntrancesDesc});
   Option ShuffleDungeonEntrances   = Option::U8  ("Dungeon Entrances",      {"Off", "On", "On + Ganon"},                                       {dungeonEntrancesDesc});
+  Option ShuffleBossEntrances      = Option::U8  ("Boss Entrances",         {"Off", "Age Restricted", "Full"},                                 {bossEntrancesDesc});
   Option ShuffleOverworldEntrances = Option::Bool("Overworld Entrances",    {"Off", "On"},                                                     {overworldEntrancesDesc});
   Option ShuffleInteriorEntrances  = Option::U8  ("Interior Entrances",     {"Off", "Simple", "All"},                                          {interiorEntrancesOff, interiorEntrancesSimple, interiorEntrancesAll});
   Option ShuffleGrottoEntrances    = Option::Bool("Grottos Entrances",      {"Off", "On"},                                                     {grottoEntrancesDesc});
@@ -125,6 +126,7 @@ namespace Settings {
     &StartingAge,
     &ShuffleEntrances,
     &ShuffleDungeonEntrances,
+    &ShuffleBossEntrances,
     &ShuffleOverworldEntrances,
     &ShuffleInteriorEntrances,
     &ShuffleGrottoEntrances,
@@ -314,6 +316,16 @@ namespace Settings {
   Option GossipStoneHints    = Option::U8  ("Gossip Stone Hints",     {"No Hints", "Need Nothing", "Mask of Truth", "Stone of Agony"},        {gossipStonesHintsDesc},                                                                                          OptionCategory::Setting,    HINTS_NEED_NOTHING);
   Option ClearerHints        = Option::U8  ("Hint Clarity",           {"Obscure", "Ambiguous", "Clear"},                                      {obscureHintsDesc, ambiguousHintsDesc, clearHintsDesc});
   Option HintDistribution    = Option::U8  ("Hint Distribution",      {"Useless", "Balanced", "Strong", "Very Strong"},                       {uselessHintsDesc, balancedHintsDesc, strongHintsDesc, veryStrongHintsDesc},                                      OptionCategory::Setting,    1); // Balanced
+  Option AltarHintText       = Option::Bool("ToT Altar Hint",         {"Off", "On"},                                                          {"", ""},                                                                                                         OptionCategory::Setting,    1); 
+  Option GanondorfHintText   = Option::Bool("Ganondorf LA Hint",      {"Off", "On"},                                                          {"", ""},                                                                                                         OptionCategory::Setting,    1);  
+  Option DampeHintText       = Option::Bool("Dampe's Diary Hint",     {"Off", "On"},                                                          {"", ""},                                                                                                         OptionCategory::Setting,    0);  
+  Option WarpSongHints       = Option::Bool("Warp Songs Hints",       {"Off", "On"},                                                          {"", ""},                                                                                                         OptionCategory::Setting,    0);
+  Option Kak10GSHintText     = Option::Bool("10 GS Hint",             {"Off", "On"},                                                          {"", ""},                                                                                                         OptionCategory::Setting,    0);  
+  Option Kak20GSHintText     = Option::Bool("20 GS Hint",             {"Off", "On"},                                                          {"", ""},                                                                                                         OptionCategory::Setting,    0);  
+  Option Kak30GSHintText     = Option::Bool("30 GS Hint",             {"Off", "On"},                                                          {"", ""},                                                                                                         OptionCategory::Setting,    0);  
+  Option Kak40GSHintText     = Option::Bool("40 GS Hint",             {"Off", "On"},                                                          {"", ""},                                                                                                         OptionCategory::Setting,    0);  
+  Option Kak50GSHintText     = Option::Bool("50 GS Hint",             {"Off", "On"},                                                          {"", ""},                                                                                                         OptionCategory::Setting,    0);
+  Option ScrubHintText       = Option::Bool("Scrub Hint Text",        {"Off", "On"},                                                          {"", ""},                                                                                                         OptionCategory::Setting,    0);    
   Option CompassesShowReward = Option::U8  ("Compasses Show Rewards", {"No", "Yes"},                                                          {compassesShowRewardsDesc},                                                                                       OptionCategory::Setting,    1);
   Option CompassesShowWotH   = Option::U8  ("Compasses Show WotH",    {"No", "Yes"},                                                          {compassesShowWotHDesc},                                                                                          OptionCategory::Setting,    1);
   Option MapsShowDungeonMode = Option::U8  ("Maps Show Dungeon Modes",{"No", "Yes"},                                                          {mapsShowDungeonModesDesc},                                                                                       OptionCategory::Setting,    1);
@@ -332,6 +344,16 @@ namespace Settings {
     &GossipStoneHints,
     &ClearerHints,
     &HintDistribution,
+    &AltarHintText,
+    &GanondorfHintText,
+    &DampeHintText,
+    &WarpSongHints,
+    &Kak10GSHintText,
+    &Kak20GSHintText,
+    &Kak30GSHintText,
+    &Kak40GSHintText,
+    &Kak50GSHintText,
+    &ScrubHintText,
     &CompassesShowReward,
     &CompassesShowWotH,
     &MapsShowDungeonMode,
@@ -1271,6 +1293,7 @@ namespace Settings {
     ctx.startingAge          = StartingAge.Value<uint8_t>();
     ctx.resolvedStartingAge  = ResolvedStartingAge;
     ctx.shuffleDungeonEntrances = ShuffleDungeonEntrances.Value<uint8_t>();
+    ctx.shuffleBossEntrances    = ShuffleBossEntrances.Value<uint8_t>();
     ctx.shuffleOverworldEntrances = (ShuffleOverworldEntrances) ? 1 : 0;
     ctx.shuffleInteriorEntrances = ShuffleInteriorEntrances.Value<uint8_t>();
     ctx.shuffleGrottoEntrances  = (ShuffleGrottoEntrances) ? 1 : 0;
@@ -1953,6 +1976,7 @@ namespace Settings {
       //Show Shuffle options when Shuffle Entrances is On
       if (ShuffleEntrances) {
         ShuffleDungeonEntrances.Unhide();
+        ShuffleBossEntrances.Unhide();
         ShuffleOverworldEntrances.Unhide();
         ShuffleInteriorEntrances.Unhide();
         ShuffleGrottoEntrances.Unhide();
@@ -1964,6 +1988,8 @@ namespace Settings {
       } else {
         ShuffleDungeonEntrances.SetSelectedIndex(SHUFFLEDUNGEONS_OFF);
         ShuffleDungeonEntrances.Hide();
+        ShuffleBossEntrances.SetSelectedIndex(SHUFFLEBOSSES_OFF);
+        ShuffleBossEntrances.Hide();
         ShuffleOverworldEntrances.SetSelectedIndex(OFF);
         ShuffleOverworldEntrances.Hide();
         ShuffleInteriorEntrances.SetSelectedIndex(SHUFFLEINTERIORS_OFF);
@@ -2444,6 +2470,7 @@ namespace Settings {
     // Sanity Check Entrance Shuffling
     if (!ShuffleEntrances) {
       ShuffleDungeonEntrances.SetSelectedIndex(OFF);
+      ShuffleBossEntrances.SetSelectedIndex(OFF);
       ShuffleOverworldEntrances.SetSelectedIndex(OFF);
       ShuffleInteriorEntrances.SetSelectedIndex(OFF);
       ShuffleGrottoEntrances.SetSelectedIndex(OFF);
@@ -2661,6 +2688,7 @@ namespace Settings {
     // Shuffle Entrances
     ShuffleEntrances.SetSelectedIndex(cvarSettings[RSK_SHUFFLE_ENTRANCES]);
     ShuffleDungeonEntrances.SetSelectedIndex(cvarSettings[RSK_SHUFFLE_DUNGEON_ENTRANCES]);
+    ShuffleBossEntrances.SetSelectedIndex(cvarSettings[RSK_SHUFFLE_BOSS_ENTRANCES]);
     ShuffleOverworldEntrances.SetSelectedIndex(cvarSettings[RSK_SHUFFLE_OVERWORLD_ENTRANCES]);
     ShuffleInteriorEntrances.SetSelectedIndex(cvarSettings[RSK_SHUFFLE_INTERIOR_ENTRANCES]);
     ShuffleGrottoEntrances.SetSelectedIndex(cvarSettings[RSK_SHUFFLE_GROTTO_ENTRANCES]);
@@ -2726,6 +2754,16 @@ namespace Settings {
     
     GossipStoneHints.SetSelectedIndex(cvarSettings[RSK_GOSSIP_STONE_HINTS]);
     ClearerHints.SetSelectedIndex(cvarSettings[RSK_HINT_CLARITY]);
+    AltarHintText.SetSelectedIndex(cvarSettings[RSK_TOT_ALTAR_HINT]);
+    GanondorfHintText.SetSelectedIndex(cvarSettings[RSK_GANONDORF_LIGHT_ARROWS_HINT]);
+    DampeHintText.SetSelectedIndex(cvarSettings[RSK_DAMPES_DIARY_HINT]);
+    WarpSongHints.SetSelectedIndex(cvarSettings[RSK_WARP_SONG_HINTS]);
+    Kak10GSHintText.SetSelectedIndex(cvarSettings[RSK_KAK_10_SKULLS_HINT]);
+    Kak20GSHintText.SetSelectedIndex(cvarSettings[RSK_KAK_20_SKULLS_HINT]);
+    Kak30GSHintText.SetSelectedIndex(cvarSettings[RSK_KAK_30_SKULLS_HINT]);
+    Kak40GSHintText.SetSelectedIndex(cvarSettings[RSK_KAK_40_SKULLS_HINT]);
+    Kak50GSHintText.SetSelectedIndex(cvarSettings[RSK_KAK_50_SKULLS_HINT]);
+    ScrubHintText.SetSelectedIndex(cvarSettings[RSK_SCRUB_TEXT_HINT]);
     HintDistribution.SetSelectedIndex(cvarSettings[RSK_HINT_DISTRIBUTION]);
     BlueFireArrows.SetSelectedIndex(cvarSettings[RSK_BLUE_FIRE_ARROWS]);
     SunlightArrows.SetSelectedIndex(cvarSettings[RSK_SUNLIGHT_ARROWS]);
