@@ -20,7 +20,7 @@ char* GetResourceDataByName(char* texPath);
 uint16_t ResourceMgr_LoadTexWidthByName(char* texPath);
 uint16_t ResourceMgr_LoadTexHeightByName(char* texPath);
 size_t GetResourceTexSizeByName(const char* name);
-char* ResourceMgr_LoadTexOrDListByName(char* filePath);
+char* ResourceMgr_LoadTexOrDListByName(char* filePath, bool forceData);
 char* ResourceMgr_LoadPlayerAnimByName(char* animPath);
 char* ResourceMgr_GetNameByCRC(uint64_t crc, char* alloc);
 Gfx* ResourceMgr_LoadGfxByCRC(uint64_t crc);
@@ -40,7 +40,7 @@ extern "C" void gSPSegment(void* value, int segNum, uintptr_t target) {
     int res = ResourceMgr_OTRSigCheck(imgData);
 
     if (res)
-        target = (uintptr_t)ResourceMgr_LoadTexOrDListByName(imgData);
+        target = (uintptr_t)ResourceMgr_LoadTexOrDListByName(imgData, false);
 
     __gSPSegment(value, segNum, target);
 }
@@ -87,7 +87,7 @@ extern "C" void gSPInvalidateTexCache(Gfx* pkt, uintptr_t texAddr)
     if (texAddr != 0 && ResourceMgr_OTRSigCheck(imgData)) {
         // Temporary solution to the mq/nonmq issue, this will be
         // handled better with LUS 1.0
-        texAddr = (uintptr_t)ResourceMgr_LoadTexOrDListByName(imgData); 
+        texAddr = (uintptr_t)ResourceMgr_LoadTexOrDListByName(imgData, false); 
     }
 
     __gSPInvalidateTexCache(pkt, texAddr);
