@@ -230,8 +230,6 @@ void Title_Draw(TitleContext* this) {
 
     gSPTextureRectangle(POLY_OPA_DISP++, 388, 94 << 2, 1156, (94 + rogoHeight) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
-    Environment_FillScreen(this->state.gfxCtx, 0, 0, 0, (s16)this->coverAlpha, FILL_SCREEN_XLU);
-
     // Draw ice cube around N64 logo.
     if (CVarGetInteger("gLetItSnow", 0)) {
         f32 scale = 0.4f;
