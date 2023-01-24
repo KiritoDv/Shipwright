@@ -229,9 +229,10 @@ void Title_Draw(TitleContext* this) {
                             0, idx * 2, 192 - 1, (idx + 1) * 2 - 1, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                                               G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
+        gDPSetTileSize(POLY_OPA_DISP++, G_TX_RENDERTILE, 0, 0, (192 - 1) << G_TEXTURE_IMAGE_FRAC,
+                                  (2 - 1) << G_TEXTURE_IMAGE_FRAC);
         gDPSetTileSize(POLY_OPA_DISP++, 1, this->uls, (this->ult & 0x7F) - idx * 4, 0, 0);
-//        gDPSetTileSize(POLY_OPA_DISP++, G_TX_RENDERTILE, 0, 0, (192 - 1) << G_TEXTURE_IMAGE_FRAC,
-//                                   (2 - 1) << G_TEXTURE_IMAGE_FRAC);
+
         gSPTextureRectangle(POLY_OPA_DISP++, 388, y << 2, 1156, (y + 2) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
     }
 
