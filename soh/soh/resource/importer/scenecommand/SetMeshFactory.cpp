@@ -34,7 +34,7 @@ void Ship::SetMeshFactoryV0::ParseFileBinary(std::shared_ptr<BinaryReader> reade
     ResourceVersionFactory::ParseFileBinary(reader, setMesh);
 
     ReadCommandId(setMesh, reader);
-    
+
     setMesh->data = reader->ReadInt8();
 
     setMesh->meshHeader.base.type = reader->ReadInt8();
@@ -86,9 +86,7 @@ void Ship::SetMeshFactoryV0::ParseFileBinary(std::shared_ptr<BinaryReader> reade
                 BgImage image;
                 image.unk_00 = reader->ReadUInt16();
                 image.id = reader->ReadUByte();
-                std::string sourceFile = reader->ReadString();
-                void* sourceData = GetResourceDataByName(sourceFile.c_str(), true);
-                image.source = sourceData;
+                image.source = (void*) strdup(("__OTR__" + reader->ReadString()).c_str());
                 image.unk_0C = reader->ReadUInt32();
                 image.tlut = reader->ReadUInt32();
                 image.width = reader->ReadUInt16();
@@ -128,7 +126,7 @@ void Ship::SetMeshFactoryV0::ParseFileBinary(std::shared_ptr<BinaryReader> reade
             setMesh->dlists.push_back(pType);
         } else if (setMesh->meshHeader.base.type == 2) {
             PolygonDlist2 dlist;
-            
+
             int32_t polyType = reader->ReadInt8(); // Unused
             dlist.pos.x = reader->ReadInt16();
             dlist.pos.y = reader->ReadInt16();
