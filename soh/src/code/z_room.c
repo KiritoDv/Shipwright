@@ -2,6 +2,8 @@
 #include "vt.h"
 #include "soh/Enhancements/randomizer/randomizer_entrance.h"
 
+#define JPEG_MARKER 0xFFD8FFE0
+
 void func_80095AB4(PlayState* play, Room* room, u32 flags);
 void func_80095D04(PlayState* play, Room* room, u32 flags);
 void func_80096F6C(PlayState* play, Room* room, u32 flags);
@@ -240,6 +242,15 @@ void func_8009638C(Gfx** displayList, void* source, void* tlut, u16 width, u16 h
     bg->b.imageSiz = siz;
     bg->b.imagePal = 0;
     bg->b.imageFlip = 0;
+
+    SohResourceType type = ResourceMgr_LoadResourceTypeByName((char*) source);
+
+    if(type == SohBackground){
+        char* blob = (char*) GetResourceDataByName((char*) source, true);
+        if (BE32SWAP(*(u32*)blob) == JPEG_MARKER) {
+            bg->b.imagePtr = (uintptr_t) ResourceMgr_LoadJPEG((char*) blob, 320 * 240 * 2);
+        }
+    }
 
     displayListHead = (void*)(bg + 1);
     if (fmt == G_IM_FMT_CI) {
