@@ -243,9 +243,7 @@ void func_8009638C(Gfx** displayList, void* source, void* tlut, u16 width, u16 h
     bg->b.imagePal = 0;
     bg->b.imageFlip = 0;
 
-    SohResourceType type = ResourceMgr_LoadResourceTypeByName((char*) source);
-
-    if(type == SohBackground){
+    if (ResourceMgr_ResourceIsBackground((char*) source)) {
         char* blob = (char*) GetResourceDataByName((char*) source, true);
         if (BE32SWAP(*(u32*)blob) == JPEG_MARKER) {
             bg->b.imagePtr = (uintptr_t) ResourceMgr_LoadJPEG((char*) blob, 320 * 240 * 2);

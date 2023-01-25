@@ -13,7 +13,6 @@
 #include "z64animation.h"
 #include "z64bgcheck.h"
 #include "Enhancements/gameconsole.h"
-#include <libultraship/libultra/gbi.h>
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -71,7 +70,8 @@
 CrowdControl* CrowdControl::Instance;
 #endif
 
-#include "libultraship/libultraship.h"
+#include <libultraship/libultraship.h>
+#include <libultraship/libultra/gbi.h>
 
 // Resource Types/Factories
 #include "soh/resource/type/Animation.h"
@@ -837,14 +837,9 @@ extern "C" char* ResourceMgr_LoadJPEG(char* data, int dataSize)
     return (char*)finalBuffer;
 }
 
-extern "C" SohResourceType ResourceMgr_LoadResourceTypeByName(char* texPath){
+extern "C" uint8_t ResourceMgr_ResourceIsBackground(char* texPath) {
     auto res = ResourceMgr_LoadResource(texPath);
-    if (res->Type == Ship::ResourceType::SOH_Background)
-        return SohResourceType::SohBackground;
-    else if (res->Type == Ship::ResourceType::Texture)
-        return SohResourceType::SohTexture;
-    else
-        return SohResourceType::UnknownType;
+    return res->Type == Ship::ResourceType::SOH_Background;
 }
 
 extern "C" uint16_t ResourceMgr_LoadTexWidthByName(char* texPath);

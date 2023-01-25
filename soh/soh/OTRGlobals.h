@@ -5,10 +5,7 @@
 
 #include "SaveManager.h"
 #include <soh/Enhancements/item-tables/ItemTableTypes.h>
-
-typedef enum {
-    SohTexture, SohBackground, UnknownType
-} SohResourceType;
+#include <libultraship/bridge.h>
 
 #ifdef __cplusplus
 #include <Window.h>
@@ -66,7 +63,7 @@ char** ResourceMgr_ListFiles(const char* searchMask, int* resultSize);
 void ResourceMgr_LoadFile(const char* resName);
 char* ResourceMgr_LoadFileFromDisk(const char* filePath);
 char* ResourceMgr_LoadJPEG(char* data, int dataSize);
-SohResourceType ResourceMgr_LoadResourceTypeByName(char* texPath);
+uint8_t ResourceMgr_ResourceIsBackground(char* texPath);
 uint16_t ResourceMgr_LoadTexWidthByName(char* texPath);
 uint16_t ResourceMgr_LoadTexHeightByName(char* texPath);
 char* ResourceMgr_LoadTexOrDListByName(const char* filePath, bool forceData);
