@@ -562,7 +562,6 @@ void Message_DrawTextboxIcon(PlayState* play, Gfx** p, s16 x, s16 y) {
     *p = gfx;
 }
 
-#define MESSAGE_SPACE_WIDTH 6
 f32 sFontWidths[144] = {
     8.0f,  // ' '
     8.0f,  // '!'
@@ -865,7 +864,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                 Message_SetTextColor(msgCtx, msgCtx->msgBufDecoded[++i] & 0xF);
                 break;
             case ' ':
-                msgCtx->textPosX += MESSAGE_SPACE_WIDTH;
+                msgCtx->textPosX += CVarGetInteger("gTextSpacing", 6);
                 break;
             case MESSAGE_BOX_BREAK:
                 if (msgCtx->msgMode == MSGMODE_TEXT_DISPLAYING) {
