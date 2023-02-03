@@ -61,6 +61,7 @@ uint32_t ResourceMgr_GetGameVersion(int index);
 void ResourceMgr_CacheDirectory(const char* resName);
 char** ResourceMgr_ListFiles(const char* searchMask, int* resultSize);
 void ResourceMgr_LoadFile(const char* resName);
+uint8_t ResourceMgr_FileExists(const char* resName);
 char* ResourceMgr_LoadFileFromDisk(const char* filePath);
 char* ResourceMgr_LoadJPEG(char* data, int dataSize);
 uint8_t ResourceMgr_ResourceIsBackground(char* texPath);

@@ -446,7 +446,7 @@ extern "C" void VanillaItemTable_Init() {
 }
 
 extern "C" void OTRExtScanner() {
-    auto lst = *OTRGlobals::Instance->context->GetResourceManager()->ListFiles("*.*").get();
+    auto lst = *OTRGlobals::Instance->context->GetResourceManager()->ListFiles("*").get();
 
     for (auto& rPath : lst) {
         std::vector<std::string> raw = StringHelper::Split(rPath, ".");
@@ -764,6 +764,15 @@ extern "C" char** ResourceMgr_ListFiles(const char* searchMask, int* resultSize)
     *resultSize = lst->size();
 
     return result;
+}
+
+extern "C" uint8_t ResourceMgr_FileExists(const char* filePath) {
+    std::string path = filePath;
+    if(path.substr(0, 7) == "__OTR__"){
+        path = path.substr(7);
+    }
+
+    return ExtensionCache.contains(path);
 }
 
 extern "C" void ResourceMgr_LoadFile(const char* resName) {
