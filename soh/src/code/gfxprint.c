@@ -141,7 +141,7 @@ void GfxPrint_Setup(GfxPrint* this) {
     gDPPipeSync(this->dList++);
     gDPSetOtherMode(this->dList++,
                     G_AD_DISABLE | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_IA16 | G_TL_TILE |
-                        G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
+                    G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
                     G_AC_NONE | G_ZS_PRIM | G_RM_XLU_SURF | G_RM_XLU_SURF2);
     gDPSetCombineMode(this->dList++, G_CC_DECALRGBA, G_CC_DECALRGBA);
 
@@ -156,8 +156,13 @@ void GfxPrint_Setup(GfxPrint* this) {
     gDPLoadTLUT(this->dList++, 64, 256, sGfxPrintFontTLUT);
 
     for (i = 1; i < 4; i++) {
-        gDPSetTile(this->dList++, G_IM_FMT_CI, G_IM_SIZ_4b, 1, 0, i * 2, hasHDTexture ? 0 : i, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+        if(hasHDTexture) {
+            gDPSetTile(this->dList++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 1, 0, i * 2, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
                    G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
+        } else {
+            gDPSetTile(this->dList++, G_IM_FMT_CI, G_IM_SIZ_4b, 1, 0, i * 2, i, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+                   G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
+        }
         gDPSetTileSize(this->dList++, i * 2, 0, 0, 60, 1020);
     }
 
@@ -240,8 +245,8 @@ void GfxPrint_PrintCharImpl(GfxPrint* this, u8 c) {
                             (this->posY + 32) << 1, tile, (u16)(c & 4) * 64, (u16)(c >> 3) * 256, 1 << 9, 1 << 9);
     } else {
         gSPTextureRectangle(this->dList++, this->posX, this->posY, this->posX + 32, this->posY + 32, hasHDTexture ? 0 : tile,
-                             (u16)((c & 4) * 64), (u16)(c >> 3) * 256, 1 << 10, 1 << 10);
-    } // (hasHDTexture ? ((64 * 4) * offset) : 0) +
+                            (hasHDTexture ? ((128 * 4) * offset) : 0) + (u16)((c & 4) * 64), (u16)(c >> 3) * 256, 1 << 10, 1 << 10);
+    } //
 
     this->posX += 32;
 }
