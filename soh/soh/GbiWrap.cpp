@@ -92,7 +92,7 @@ extern "C" void gSPInvalidateTexCache(Gfx* pkt, uintptr_t texAddr)
     if (texAddr != 0 && ResourceMgr_OTRSigCheck(imgData)) {
         // Temporary solution to the mq/nonmq issue, this will be
         // handled better with LUS 1.0
-        texAddr = (uintptr_t)ResourceMgr_LoadTexOrDListByName(imgData); 
+        texAddr = (uintptr_t)ResourceMgr_LoadTexOrDListByName(imgData);
     }
 
     __gSPInvalidateTexCache(pkt, texAddr);

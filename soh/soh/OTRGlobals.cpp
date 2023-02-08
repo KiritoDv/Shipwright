@@ -13,7 +13,6 @@
 #include "z64animation.h"
 #include "z64bgcheck.h"
 #include "Enhancements/gameconsole.h"
-#include <libultraship/libultra/gbi.h>
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -73,7 +72,8 @@ CrowdControl* CrowdControl::Instance;
 #endif
 
 #include "Enhancements/game-interactor/GameInteractor.h"
-#include "libultraship/libultraship.h"
+#include <libultraship/libultraship.h>
+#include <libultraship/libultra/gbi.h>
 
 // Resource Types/Factories
 #include "soh/resource/type/Animation.h"
@@ -192,9 +192,9 @@ const char* constCameraStrings[] = {
 OTRGlobals::OTRGlobals() {
     std::vector<std::string> OTRFiles;
     std::string mqPath = Ship::Window::GetPathRelativeToAppDirectory("oot-mq.otr");
-    if (std::filesystem::exists(mqPath)) { 
+    if (std::filesystem::exists(mqPath)) {
         OTRFiles.push_back(mqPath);
-    } 
+    }
     std::string ootPath = Ship::Window::GetPathRelativeToAppDirectory("oot.otr");
     if (std::filesystem::exists(ootPath)) {
         OTRFiles.push_back(ootPath);
@@ -209,7 +209,7 @@ OTRGlobals::OTRGlobals() {
             }
         }
     }
-    std::unordered_set<uint32_t> ValidHashes = { 
+    std::unordered_set<uint32_t> ValidHashes = {
         OOT_PAL_MQ,
         OOT_NTSC_JP_MQ,
         OOT_NTSC_US_MQ,
@@ -540,7 +540,7 @@ extern "C" void VanillaItemTable_Init() {
 }
 
 extern "C" void OTRExtScanner() {
-    auto lst = *OTRGlobals::Instance->context->GetResourceManager()->ListFiles("*.*").get();
+    auto lst = *OTRGlobals::Instance->context->GetResourceManager()->ListFiles("*").get();
 
     for (auto& rPath : lst) {
         std::vector<std::string> raw = StringHelper::Split(rPath, ".");
@@ -861,6 +861,15 @@ extern "C" char** ResourceMgr_ListFiles(const char* searchMask, int* resultSize)
     return result;
 }
 
+extern "C" uint8_t ResourceMgr_FileExists(const char* filePath) {
+    std::string path = filePath;
+    if(path.substr(0, 7) == "__OTR__"){
+        path = path.substr(7);
+    }
+
+    return ExtensionCache.contains(path);
+}
+
 extern "C" void ResourceMgr_LoadFile(const char* resName) {
     OTRGlobals::Instance->context->GetResourceManager()->LoadResource(resName);
 }
@@ -932,6 +941,11 @@ extern "C" char* ResourceMgr_LoadJPEG(char* data, int dataSize)
     return (char*)finalBuffer;
 }
 
+extern "C" uint8_t ResourceMgr_ResourceIsBackground(char* texPath) {
+    auto res = ResourceMgr_LoadResource(texPath);
+    return res->Type == Ship::ResourceType::SOH_Background;
+}
+
 extern "C" uint16_t ResourceMgr_LoadTexWidthByName(char* texPath);
 
 extern "C" uint16_t ResourceMgr_LoadTexHeightByName(char* texPath);
@@ -951,8 +965,20 @@ extern "C" char* ResourceMgr_LoadTexOrDListByName(const char* filePath) {
                 Path.replace(pos, 7, "/mq/");
             }
         }
-        return (char*)GetResourceDataByName(Path.c_str(), false);
+        return strdup(Path.c_str());
     }
+}
+
+extern "C" char* GetResourceDataByNameHandlingMQ(const char* filePath, bool now) {
+    std::string Path = filePath;
+    if (ResourceMgr_IsGameMasterQuest()) {
+        size_t pos = 0;
+        if ((pos = Path.find("/nonmq/", 0)) != std::string::npos) {
+            Path.replace(pos, 7, "/mq/");
+        }
+    }
+
+    return (char*)GetResourceDataByName(Path.c_str(), now);
 }
 
 extern "C" Sprite* GetSeedTexture(uint8_t index) {
@@ -1359,10 +1385,10 @@ extern "C" void AudioPlayer_Play(const uint8_t* buf, uint32_t len) {
 
 extern "C" int Controller_ShouldRumble(size_t slot) {
     auto controlDeck = Ship::Window::GetInstance()->GetControlDeck();
-    
+
     if (slot < controlDeck->GetNumVirtualDevices()) {
         auto physicalDevice = controlDeck->GetPhysicalDeviceFromVirtualSlot(slot);
-        
+
         if (physicalDevice->getProfile(slot)->UseRumble && physicalDevice->CanRumble()) {
             return 1;
         }
@@ -1551,7 +1577,7 @@ extern "C" int CustomMessage_RetrieveIfExists(PlayState* play) {
               Player_GetMask(play) == PLAYER_MASK_TRUTH) ||
              (Randomizer_GetSettingValue(RSK_GOSSIP_STONE_HINTS) == RO_GOSSIP_STONES_NEED_STONE && CHECK_QUEST_ITEM(QUEST_STONE_OF_AGONY)))) {
 
-            Actor* stone = GET_PLAYER(play)->targetActor; 
+            Actor* stone = GET_PLAYER(play)->targetActor;
             actorParams = stone->params;
 
             // if we're in a generic grotto
@@ -1610,11 +1636,11 @@ extern "C" int CustomMessage_RetrieveIfExists(PlayState* play) {
             messageEntry = CustomMessageManager::Instance->RetrieveMessage(Randomizer::NaviRandoMessageTableID, naviTextId);
         } else if (Randomizer_GetSettingValue(RSK_SHUFFLE_MAGIC_BEANS) && textId == TEXT_BEAN_SALESMAN) {
             messageEntry = CustomMessageManager::Instance->RetrieveMessage(Randomizer::merchantMessageTableID, TEXT_BEAN_SALESMAN);
-        } else if (Randomizer_GetSettingValue(RSK_SHUFFLE_MERCHANTS) != RO_SHUFFLE_MERCHANTS_OFF && (textId == TEXT_MEDIGORON || 
+        } else if (Randomizer_GetSettingValue(RSK_SHUFFLE_MERCHANTS) != RO_SHUFFLE_MERCHANTS_OFF && (textId == TEXT_MEDIGORON ||
           (textId == TEXT_CARPET_SALESMAN_1 && !Flags_GetRandomizerInf(RAND_INF_MERCHANTS_CARPET_SALESMAN)) ||
           (textId == TEXT_CARPET_SALESMAN_2 && !Flags_GetRandomizerInf(RAND_INF_MERCHANTS_CARPET_SALESMAN)))) {
             RandomizerInf randoInf = (RandomizerInf)(textId == TEXT_MEDIGORON ? RAND_INF_MERCHANTS_MEDIGORON : RAND_INF_MERCHANTS_CARPET_SALESMAN);
-            messageEntry = OTRGlobals::Instance->gRandomizer->GetMerchantMessage(randoInf, textId, Randomizer_GetSettingValue(RSK_SHUFFLE_MERCHANTS) != RO_SHUFFLE_MERCHANTS_ON_HINT);            
+            messageEntry = OTRGlobals::Instance->gRandomizer->GetMerchantMessage(randoInf, textId, Randomizer_GetSettingValue(RSK_SHUFFLE_MERCHANTS) != RO_SHUFFLE_MERCHANTS_ON_HINT);
         } else if (Randomizer_GetSettingValue(RSK_BOMBCHUS_IN_LOGIC) &&
                    (textId == TEXT_BUY_BOMBCHU_10_DESC || textId == TEXT_BUY_BOMBCHU_10_PROMPT)) {
             messageEntry = CustomMessageManager::Instance->RetrieveMessage(customMessageTableID, textId);

@@ -4,6 +4,7 @@
 #include "overlays/actors/ovl_En_Zl3/z_en_zl3.h"
 #include "overlays/actors/ovl_Bg_Ganon_Otyuka/z_bg_ganon_otyuka.h"
 #include "overlays/actors/ovl_En_Bom/z_en_bom.h"
+#include "textures/boss_title_cards/object_ganon.h"
 #include "assets/objects/object_ganon/object_ganon.h"
 #include "assets/objects/object_ganon_anime1/object_ganon_anime1.h"
 #include "assets/objects/object_ganon_anime2/object_ganon_anime2.h"
@@ -1095,7 +1096,7 @@ void BossGanon_IntroCutscene(BossGanon* this, PlayState* play) {
 
                 if (!(gSaveContext.eventChkInf[7] & 0x100)) {
                     TitleCard_InitBossName(play, &play->actorCtx.titleCtx,
-                                           SEGMENTED_TO_VIRTUAL(gGanondorfTitleCardTex), 160, 180, 128, 40, true);
+                                           SEGMENTED_TO_VIRTUAL(gGanondorfTitleCardENGTex), 160, 180, 128, 40, true);
                 }
 
                 gSaveContext.eventChkInf[7] |= 0x100;
@@ -1212,8 +1213,8 @@ void BossGanon_ShatterWindows(u8 windowShatterState) {
     s16 i;
     // Temporary solution: using LoadTexOrDList to ensure we actually have the texture available
     // based on mq/nonmq. This will be handled properly with LUS 1.0
-    u8* tex1 = ResourceMgr_LoadTexOrDListByName(SEGMENTED_TO_VIRTUAL(ganon_boss_sceneTex_006C18));
-    u8* tex2 = ResourceMgr_LoadTexOrDListByName(SEGMENTED_TO_VIRTUAL(ganon_boss_sceneTex_007418));
+    u8* tex1 = GetResourceDataByNameHandlingMQ(SEGMENTED_TO_VIRTUAL(ganon_boss_sceneTex_006C18), false);
+    u8* tex2 = GetResourceDataByNameHandlingMQ(SEGMENTED_TO_VIRTUAL(ganon_boss_sceneTex_007418), false);
     u8* templateTex = GetResourceDataByName(SEGMENTED_TO_VIRTUAL(gGanondorfWindowShatterTemplateTex), false);
 
     for (i = 0; i < 2048; i++) {
@@ -3431,7 +3432,7 @@ void BossGanon_DrawShock(BossGanon* this, PlayState* play) {
                 gSPMatrix(POLY_XLU_DISP++, MATRIX_NEWMTX(gfxCtx),
                           G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 gSPDisplayList(POLY_XLU_DISP++, gGanondorfSquareDL);
-                
+
                 FrameInterpolation_RecordCloseChild();
             }
         } else {

@@ -1,4 +1,5 @@
 #include "z_boss_dodongo.h"
+#include "textures/boss_title_cards/object_kingdodongo.h"
 #include "objects/object_kingdodongo/object_kingdodongo.h"
 #include "overlays/actors/ovl_Door_Warp1/z_door_warp1.h"
 #include "scenes/dungeons/ddan_boss/ddan_boss_room_1.h"
@@ -119,9 +120,9 @@ void func_808C12C4(u8* arg1, s16 arg2) {
 
 void func_808C1554(void* arg0, void* floorTex, s32 arg2, f32 arg3) {
     // Entering the King Dodongo boss battle was crashing when using only an mq otr
-    // because it was trying to load a texture from a non-mq path 
-    // HACK: GetResourceDataByName doesn't account for mq vs non-mq paths, LoadTexOrDListByName does. 
-    arg0 = ResourceMgr_LoadTexOrDListByName(arg0);
+    // because it was trying to load a texture from a non-mq path
+    // HACK: GetResourceDataByName doesn't account for mq vs non-mq paths, LoadTexOrDListByName does.
+    arg0 = GetResourceDataByNameHandlingMQ(arg0, false);
     floorTex = GetResourceDataByName(floorTex, false);
 
     u16* temp_s3 = SEGMENTED_TO_VIRTUAL(arg0);
@@ -424,7 +425,7 @@ void BossDodongo_IntroCutscene(BossDodongo* this, PlayState* play) {
             if (this->unk_198 == 0x5A) {
                 if (!(gSaveContext.eventChkInf[7] & 2)) {
                     TitleCard_InitBossName(play, &play->actorCtx.titleCtx,
-                                           SEGMENTED_TO_VIRTUAL(gKingDodongoTitleCardTex), 160, 180, 128, 40, true);
+                                           SEGMENTED_TO_VIRTUAL(gKingDodongoTitleCardENGTex), 160, 180, 128, 40, true);
                 }
                 Audio_QueueSeqCmd(SEQ_PLAYER_BGM_MAIN << 24 | NA_BGM_FIRE_BOSS);
             }

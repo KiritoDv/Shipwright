@@ -5,6 +5,7 @@
 
 #include "SaveManager.h"
 #include <soh/Enhancements/item-tables/ItemTableTypes.h>
+#include <libultraship/bridge.h>
 
 #ifdef __cplusplus
 #include <Window.h>
@@ -40,7 +41,7 @@ uint32_t IsGameMasterQuest();
 #endif
 
 #ifndef __cplusplus
-    void InitOTR(void);
+void InitOTR(void);
 void DeinitOTR(void);
 void VanillaItemTable_Init();
 void OTRAudio_Init();
@@ -60,11 +61,14 @@ uint32_t ResourceMgr_GetGameVersion(int index);
 void ResourceMgr_CacheDirectory(const char* resName);
 char** ResourceMgr_ListFiles(const char* searchMask, int* resultSize);
 void ResourceMgr_LoadFile(const char* resName);
+uint8_t ResourceMgr_FileExists(const char* resName);
 char* ResourceMgr_LoadFileFromDisk(const char* filePath);
 char* ResourceMgr_LoadJPEG(char* data, int dataSize);
+uint8_t ResourceMgr_ResourceIsBackground(char* texPath);
 uint16_t ResourceMgr_LoadTexWidthByName(char* texPath);
 uint16_t ResourceMgr_LoadTexHeightByName(char* texPath);
-char* ResourceMgr_LoadTexOrDListByName(const char* filePath);
+char* ResourceMgr_LoadTexOrDListByName(const char* filePath, bool forceData);
+char* GetResourceDataByNameHandlingMQ(const char* filePath, bool now);
 char* ResourceMgr_LoadPlayerAnimByName(const char* animPath);
 AnimationHeaderCommon* ResourceMgr_LoadAnimByName(const char* path);
 char* ResourceMgr_GetNameByCRC(uint64_t crc, char* alloc);

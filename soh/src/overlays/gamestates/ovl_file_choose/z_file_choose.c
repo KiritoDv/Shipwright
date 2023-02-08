@@ -39,65 +39,6 @@ void FileChoose_DrawTextureI8(GraphicsContext* gfxCtx, const void* texture, s16 
     CLOSE_DISPS(gfxCtx);
 }
 
-void FileChoose_DrawRawImageRGBA32(GraphicsContext* gfxCtx, s16 centerX, s16 centerY, const char* source, u32 width, u32 height) {
-    u8* curTexture;
-    s32 textureCount;
-    u32 rectLeft;
-    u32 rectTop;
-    u32 textureHeight;
-    s32 remainingSize;
-    s32 textureSize;
-    s32 pad;
-    s32 i;
-
-    OPEN_DISPS(gfxCtx);
-
-    source = ResourceMgr_LoadFileRaw(source);
-
-    curTexture = source;
-    rectLeft = centerX - (width / 2);
-    rectTop = centerY - (height / 2);
-    textureHeight = 4096 / (width << 2);
-    remainingSize = (width * height) << 2;
-    textureSize = (width * textureHeight) << 2;
-    textureCount = remainingSize / textureSize;
-    if ((remainingSize % textureSize) != 0) {
-        textureCount += 1;
-    }
-
-    gDPSetTileCustom(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_32b, width, textureHeight, 0, G_TX_NOMIRROR | G_TX_CLAMP,
-                     G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-
-    remainingSize -= textureSize;
-
-    for (i = 0; i < textureCount; i++) {
-        gDPSetTextureImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_32b, width, curTexture);
-
-        gDPLoadSync(POLY_OPA_DISP++);
-        gDPLoadTile(POLY_OPA_DISP++, G_TX_LOADTILE, 0, 0, (width - 1) << 2, (textureHeight - 1) << 2);
-
-        gSPTextureRectangle(POLY_OPA_DISP++, rectLeft << 2, rectTop << 2, (rectLeft + (s32)width) << 2,
-                            (rectTop + textureHeight) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
-
-        curTexture += textureSize;
-        rectTop += textureHeight;
-
-        if ((remainingSize - textureSize) < 0) {
-            if (remainingSize > 0) {
-                textureHeight = remainingSize / (s32)(width << 2);
-                remainingSize -= textureSize;
-
-                gDPSetTileCustom(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_32b, width, textureHeight, 0,
-                                 G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
-                                 G_TX_NOLOD, G_TX_NOLOD);
-            }
-        } else {
-            remainingSize -= textureSize;
-        }
-    }
-    CLOSE_DISPS(gfxCtx);
-}
-
 void FileChoose_DrawImageRGBA32(GraphicsContext* gfxCtx, s16 centerX, s16 centerY, const char* source, u32 width, u32 height) {
     u8* curTexture;
     s32 textureCount;
@@ -111,49 +52,19 @@ void FileChoose_DrawImageRGBA32(GraphicsContext* gfxCtx, s16 centerX, s16 center
 
     OPEN_DISPS(gfxCtx);
 
-    source = GetResourceDataByName(source, false);
-
-    curTexture = source;
     rectLeft = centerX - (width / 2);
     rectTop = centerY - (height / 2);
-    textureHeight = 4096 / (width << 2);
-    remainingSize = (width * height) << 2;
-    textureSize = (width * textureHeight) << 2;
-    textureCount = remainingSize / textureSize;
-    if ((remainingSize % textureSize) != 0) {
-        textureCount += 1;
-    }
 
-    gDPSetTileCustom(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_32b, width, textureHeight, 0, G_TX_NOMIRROR | G_TX_CLAMP,
+    gDPSetTileCustom(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_32b, width, height, 0, G_TX_NOMIRROR | G_TX_CLAMP,
                      G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
-    remainingSize -= textureSize;
+    gDPSetTextureImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_32b, width, source);
 
-    for (i = 0; i < textureCount; i++) {
-        gDPSetTextureImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_32b, width, curTexture);
+    gDPLoadSync(POLY_OPA_DISP++);
+    gDPLoadTile(POLY_OPA_DISP++, G_TX_LOADTILE, 0, 0, (width - 1) << 2, (height - 1) << 2);
 
-        gDPLoadSync(POLY_OPA_DISP++);
-        gDPLoadTile(POLY_OPA_DISP++, G_TX_LOADTILE, 0, 0, (width - 1) << 2, (textureHeight - 1) << 2);
-
-        gSPTextureRectangle(POLY_OPA_DISP++, rectLeft << 2, rectTop << 2, (rectLeft + (s32)width) << 2,
-                            (rectTop + textureHeight) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
-
-        curTexture += textureSize;
-        rectTop += textureHeight;
-
-        if ((remainingSize - textureSize) < 0) {
-            if (remainingSize > 0) {
-                textureHeight = remainingSize / (s32)(width << 2);
-                remainingSize -= textureSize;
-
-                gDPSetTileCustom(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_32b, width, textureHeight, 0,
-                                 G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
-                                 G_TX_NOLOD, G_TX_NOLOD);
-            }
-        } else {
-            remainingSize -= textureSize;
-        }
-    }
+    gSPTextureRectangle(POLY_OPA_DISP++, rectLeft << 2, rectTop << 2, (rectLeft + (s32)width) << 2,
+                        (rectTop + height) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
     CLOSE_DISPS(gfxCtx);
 }
 
@@ -505,7 +416,7 @@ void FileChoose_UpdateMainMenu(GameState* thisx) {
                 this->logoAlpha = 0;
             } else if(!FileChoose_IsSaveCompatible(Save_GetSaveMetaInfo(this->buttonIndex))) {
                 Audio_PlaySoundGeneral(NA_SE_SY_FSEL_ERROR, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
-            }  
+            }
             else {
                 Audio_PlaySoundGeneral(NA_SE_SY_FSEL_DECIDE_L, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
                 this->actionTimer = 8;
@@ -666,7 +577,7 @@ void FileChoose_UpdateQuestMenu(GameState* thisx) {
         if (this->stickRelX > 30 || (dpad && CHECK_BTN_ANY(input->press.button, BTN_DRIGHT))) {
             this->questType[this->buttonIndex] += 1;
             if (this->questType[this->buttonIndex] == MASTER_QUEST && !ResourceMgr_GameHasMasterQuest()) {
-                // the only case not handled by the MIN/MAX_QUEST logic below. This will either put it at 
+                // the only case not handled by the MIN/MAX_QUEST logic below. This will either put it at
                 // above MAX_QUEST in which case it will wrap back around, or it will put it on MAX_QUEST
                 // in which case if MAX_QUEST even is that number it will be a valid selection that won't
                 // crash.
@@ -782,7 +693,7 @@ void FileChoose_RotateToOptions(GameState* thisx) {
  */
 void FileChoose_RotateToMain(GameState* thisx) {
     FileChooseContext* this = (FileChooseContext*)thisx;
-    if (this->configMode == CM_QUEST_TO_MAIN || (MIN_QUEST == MAX_QUEST && this->configMode == CM_NAME_ENTRY_TO_MAIN && this->prevConfigMode != CM_MAIN_MENU) || 
+    if (this->configMode == CM_QUEST_TO_MAIN || (MIN_QUEST == MAX_QUEST && this->configMode == CM_NAME_ENTRY_TO_MAIN && this->prevConfigMode != CM_MAIN_MENU) ||
         this->configMode == CM_OPTIONS_TO_MAIN) {
         this->windowRot -= VREG(16);
 
@@ -1390,11 +1301,11 @@ const char* FileChoose_GetQuestChooseTitleTexName(Language lang) {
     switch (lang) {
         case LANGUAGE_ENG:
         default:
-            return "assets/textures/title_static/gFileSelPleaseChooseAQuestENGTex";
+            return "__OTR__textures/title_static/gFileSelPleaseChooseAQuestENGTex";
         case LANGUAGE_FRA:
-            return "assets/textures/title_static/gFileSelPleaseChooseAQuestFRATex";
+            return "__OTR__textures/title_static/gFileSelPleaseChooseAQuestFRATex";
         case LANGUAGE_GER:
-            return "assets/textures/title_static/gFileSelPleaseChooseAQuestGERTex";
+            return "__OTR__textures/title_static/gFileSelPleaseChooseAQuestGERTex";
     }
 }
 
@@ -1410,10 +1321,10 @@ void FileChoose_DrawWindowContents(GameState* thisx) {
     s16 quadVtxIndex;
     s16 isActive;
     s16 pad;
-    char* tex = (this->configMode == CM_QUEST_MENU || this->configMode == CM_ROTATE_TO_NAME_ENTRY || 
+    char* tex = (this->configMode == CM_QUEST_MENU || this->configMode == CM_ROTATE_TO_NAME_ENTRY ||
         this->configMode == CM_START_QUEST_MENU || this->configMode == CM_QUEST_TO_MAIN ||
         this->configMode == CM_NAME_ENTRY_TO_QUEST_MENU)
-                  ? ResourceMgr_LoadFileRaw(FileChoose_GetQuestChooseTitleTexName(gSaveContext.language))
+                  ? FileChoose_GetQuestChooseTitleTexName(gSaveContext.language)
                   : sTitleLabels[gSaveContext.language][this->titleLabel];
 
     OPEN_DISPS(this->state.gfxCtx);
@@ -1431,7 +1342,7 @@ void FileChoose_DrawWindowContents(GameState* thisx) {
     gSP1Quadrangle(POLY_OPA_DISP++, 0, 2, 3, 1, 0);
 
     // draw next title label
-    if ((this->configMode == CM_QUEST_MENU) || (this->configMode == CM_START_QUEST_MENU) || 
+    if ((this->configMode == CM_QUEST_MENU) || (this->configMode == CM_START_QUEST_MENU) ||
         this->configMode == CM_NAME_ENTRY_TO_QUEST_MENU) {
         // draw control stick prompts.
         if (MIN_QUEST != MAX_QUEST) {
@@ -1476,14 +1387,14 @@ void FileChoose_DrawWindowContents(GameState* thisx) {
                 FileChoose_DrawImageRGBA32(this->state.gfxCtx, 160, 135, gTitleZeldaShieldLogoMQTex, 160, 160);
                 FileChoose_DrawImageRGBA32(this->state.gfxCtx, 182, 180, "__OTR__objects/object_mag/gTitleMasterQuestSubtitleTex", 128, 32);
                 break;
-            
+
             case RANDOMIZER_QUEST:
                 DrawSeedHashSprites(this);
                 gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, this->logoAlpha);
                 FileChoose_DrawTextureI8(this->state.gfxCtx, gTitleTheLegendOfTextTex, 72, 8, 156, 108, 72, 8, 1024, 1024);
                 FileChoose_DrawTextureI8(this->state.gfxCtx, gTitleOcarinaOfTimeTMTextTex, 96, 8, 154, 163, 96, 8, 1024, 1024);
                 FileChoose_DrawImageRGBA32(this->state.gfxCtx, 160, 135, ResourceMgr_GameHasOriginal() ? gTitleZeldaShieldLogoTex : gTitleZeldaShieldLogoMQTex, 160, 160);
-                FileChoose_DrawRawImageRGBA32(this->state.gfxCtx, 182, 180, "assets/objects/object_mag/gTitleRandomizerSubtitleTex", 128, 32);
+                FileChoose_DrawImageRGBA32(this->state.gfxCtx, 182, 180, "__OTR__objects/object_mag/gTitleRandomizerSubtitleTex", 128, 32);
                 break;
         }
     } else if (this->configMode != CM_ROTATE_TO_NAME_ENTRY) {
@@ -1558,8 +1469,7 @@ void FileChoose_DrawWindowContents(GameState* thisx) {
                                     sWindowContentColors[isActive][1], sWindowContentColors[isActive][2],
                                     this->nameAlpha[i]);
                 }
-                gDPLoadTextureBlock(POLY_OPA_DISP++,
-                                    ResourceMgr_LoadFileRaw("assets/textures/title_static/gFileSelRANDButtonTex"),
+                gDPLoadTextureBlock(POLY_OPA_DISP++, "__OTR__textures/title_static/gFileSelRANDButtonTex",
                                     G_IM_FMT_IA, G_IM_SIZ_16b, 44, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
                                     G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
                 gSP1Quadrangle(POLY_OPA_DISP++, 8, 10, 11, 9, 0);
@@ -1576,7 +1486,7 @@ void FileChoose_DrawWindowContents(GameState* thisx) {
                                     this->nameAlpha[i]);
                 }
                 gDPLoadTextureBlock(POLY_OPA_DISP++,
-                                    ResourceMgr_LoadFileRaw("assets/textures/title_static/gFileSelMQButtonTex"),
+                                    "__OTR__textures/title_static/gFileSelMQButtonTex",
                                     G_IM_FMT_IA, G_IM_SIZ_16b, 44, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
                                     G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
                 gSP1Quadrangle(POLY_OPA_DISP++, 8, 10, 11, 9, 0);
@@ -1722,7 +1632,7 @@ void FileChoose_ConfigModeDraw(GameState* thisx) {
         Matrix_Scale(0.78f, 0.78f, 0.78f, MTXMODE_APPLY);
 
         if (this->windowRot != 0) {
-            if (this->configMode == CM_ROTATE_TO_QUEST_MENU || 
+            if (this->configMode == CM_ROTATE_TO_QUEST_MENU ||
                 (this->configMode >= CM_MAIN_TO_OPTIONS && this->configMode <= CM_OPTIONS_TO_MAIN) ||
                 MIN_QUEST == MAX_QUEST || this->configMode == CM_QUEST_TO_MAIN) {
                 Matrix_RotateX(this->windowRot / 100.0f, MTXMODE_APPLY);
@@ -1810,7 +1720,7 @@ void FileChoose_ConfigModeDraw(GameState* thisx) {
     }
 
     // draw quest menu
-    if ((this->configMode == CM_QUEST_MENU) || (this->configMode == CM_ROTATE_TO_QUEST_MENU) || 
+    if ((this->configMode == CM_QUEST_MENU) || (this->configMode == CM_ROTATE_TO_QUEST_MENU) ||
         (this->configMode == CM_ROTATE_TO_NAME_ENTRY) || this->configMode == CM_QUEST_TO_MAIN ||
         this->configMode == CM_NAME_ENTRY_TO_QUEST_MENU) {
         // window

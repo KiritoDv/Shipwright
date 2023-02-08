@@ -1,4 +1,5 @@
 #include "Main.h"
+#include "Exporter.h"
 #include "BackgroundExporter.h"
 #include "TextureExporter.h"
 #include "RoomExporter.h"
@@ -108,7 +109,6 @@ static void ExporterProgramEnd()
 
 		// Add any additional files that need to be manually copied...
 		auto lst = Directory::ListFiles("Extract");
-
 		for (auto item : lst)
 		{
 			std::vector<std::string> splitPath = StringHelper::Split(item, ".");
@@ -120,19 +120,25 @@ static void ExporterProgramEnd()
 				splitPath.pop_back();
 				std::string afterPath = std::accumulate(splitPath.begin(), splitPath.end(), std::string(""));
 				if (extension == "png" && (format == "rgba32" || format == "rgb5a1" || format == "i4" || format == "i8" || format == "ia4" || format == "ia8" || format == "ia16" || format == "ci4" || format == "ci8")) {
+					ZTexture tex(nullptr);
 					Globals::Instance->buildRawTexture = true;
-					Globals::Instance->BuildAssetTexture(item, ZTexture::GetTextureTypeFromString(format), afterPath);
-					Globals::Instance->buildRawTexture = false;
-
-					auto fileData = File::ReadAllBytes(afterPath);
+					tex.FromPNG(item, ZTexture::GetTextureTypeFromString(format));
 					printf("otrArchive->AddFile(%s)\n", StringHelper::Split(afterPath, "Extract/")[1].c_str());
-					otrArchive->AddFile(StringHelper::Split(afterPath, "Extract/")[1], (uintptr_t)fileData.data(), fileData.size());
+					auto exporter = new OTRExporter_Texture();
+					MemoryStream* stream = new MemoryStream();
+        			BinaryWriter writer(stream);
+					exporter->Save(&tex, "", &writer);
+					std::string src = tex.GetBodySourceCode();
+					writer.Write((char*) src.c_str(), src.size());
+					std::vector<char> fileData = stream->ToVector();
+					otrArchive->AddFile(StringHelper::Split(afterPath, "Extract/assets/")[1], (uintptr_t)fileData.data(), fileData.size());
+					continue;
 				}
 			}
 
 			auto fileData = File::ReadAllBytes(item);
 			printf("otrArchive->AddFile(%s)\n", StringHelper::Split(item, "Extract/")[1].c_str());
-			otrArchive->AddFile(StringHelper::Split(item, "Extract/")[1], (uintptr_t)fileData.data(), fileData.size());
+			otrArchive->AddFile(StringHelper::Split(item, item.find("Extract/assets/") != std::string::npos ? "Extract/assets/" : "Extract/")[1], (uintptr_t)fileData.data(), fileData.size());
 		}
 
 		//otrArchive->AddFile("Audiobank", (uintptr_t)Globals::Instance->GetBaseromFile("Audiobank").data(), Globals::Instance->GetBaseromFile("Audiobank").size());
