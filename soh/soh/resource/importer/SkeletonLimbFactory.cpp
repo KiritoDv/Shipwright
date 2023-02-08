@@ -214,38 +214,57 @@ void Ship::SkeletonLimbFactoryV0::ParseFileBinary(std::shared_ptr<BinaryReader> 
 }
 void SkeletonLimbFactoryV0::ParseFileXML(tinyxml2::XMLElement* reader, std::shared_ptr<Resource> resource) 
 {
-    std::shared_ptr<SkeletonLimb> skelLimb = std::static_pointer_cast<SkeletonLimb>(resource);
+    std::shared_ptr<SkeletonLimb> skeletonLimb = std::static_pointer_cast<SkeletonLimb>(resource);
 
     std::string limbType = reader->Attribute("Type");
 
     // OTRTODO
-    skelLimb->limbType = LimbType::LOD;
+    skeletonLimb->limbType = LimbType::LOD;
 
     // skelLimb->legTransX = reader->FloatAttribute("LegTransX");
     // skelLimb->legTransY = reader->FloatAttribute("LegTransY");
     // skelLimb->legTransZ = reader->FloatAttribute("LegTransZ");
-    skelLimb->rotX = reader->IntAttribute("RotX");
-    skelLimb->rotY = reader->IntAttribute("RotY");
-    skelLimb->rotZ = reader->IntAttribute("RotZ");
+    skeletonLimb->rotX = reader->IntAttribute("RotX");
+    skeletonLimb->rotY = reader->IntAttribute("RotY");
+    skeletonLimb->rotZ = reader->IntAttribute("RotZ");
 
     // skelLimb->transX = reader->IntAttribute("TransX");
     // skelLimb->transY = reader->IntAttribute("TransY");
     // skelLimb->transZ = reader->IntAttribute("TransZ");
 
-    skelLimb->transX = (int)reader->FloatAttribute("LegTransX");
-    skelLimb->transY = (int)reader->FloatAttribute("LegTransY");
-    skelLimb->transZ = (int)reader->FloatAttribute("LegTransZ");
+    skeletonLimb->transX = (int)reader->FloatAttribute("LegTransX");
+    skeletonLimb->transY = (int)reader->FloatAttribute("LegTransY");
+    skeletonLimb->transZ = (int)reader->FloatAttribute("LegTransZ");
 
-    skelLimb->childIndex = reader->IntAttribute("ChildIndex");
-    skelLimb->siblingIndex = reader->IntAttribute("SiblingIndex");
+    skeletonLimb->childIndex = reader->IntAttribute("ChildIndex");
+    skeletonLimb->siblingIndex = reader->IntAttribute("SiblingIndex");
 
     // skelLimb->childPtr = reader->Attribute("ChildLimb");
     // skelLimb->siblingPtr = reader->Attribute("SiblingLimb");
-    skelLimb->dListPtr = reader->Attribute("DisplayList1");
+    skeletonLimb->dListPtr = reader->Attribute("DisplayList1");
 
     if (std::string(reader->Attribute("DisplayList1")) == "gEmptyDL")
-        skelLimb->dListPtr = "";
+        skeletonLimb->dListPtr = "";
 
+    skeletonLimb->limbData.lodLimb.jointPos.x = skeletonLimb->transX;
+    skeletonLimb->limbData.lodLimb.jointPos.y = skeletonLimb->transY;
+    skeletonLimb->limbData.lodLimb.jointPos.z = skeletonLimb->transZ;
+    skeletonLimb->limbData.lodLimb.child = skeletonLimb->childIndex;
+    skeletonLimb->limbData.lodLimb.sibling = skeletonLimb->siblingIndex;
+
+    if (skeletonLimb->dListPtr != "") {
+        auto dList = GetResourceDataByName(skeletonLimb->dListPtr.c_str(), true);
+        skeletonLimb->limbData.lodLimb.dLists[0] = (Gfx*)dList;
+    } else {
+        skeletonLimb->limbData.lodLimb.dLists[0] = nullptr;
+    }
+
+    if (skeletonLimb->dList2Ptr != "") {
+        auto dList = GetResourceDataByName(skeletonLimb->dList2Ptr.c_str(), true);
+        skeletonLimb->limbData.lodLimb.dLists[1] = (Gfx*)dList;
+    } else {
+        skeletonLimb->limbData.lodLimb.dLists[1] = nullptr;
+    }
     // skelLimb->dList2Ptr = reader->Attribute("DisplayList2");
 }
 
