@@ -162,6 +162,7 @@ source_group("soh\\Enhancements\\crowd-control" REGULAR_EXPRESSION "soh/Enhancem
 source_group("soh\\Enhancements\\custom-message" REGULAR_EXPRESSION "soh/Enhancements/custom-message/*")
 source_group("soh\\Enhancements\\debugger" REGULAR_EXPRESSION "soh/Enhancements/debugger/*")
 source_group("soh\\Enhancements\\game-interactor" REGULAR_EXPRESSION "soh/Enhancements/game-interactor/*")
+source_group("soh\\Enhancements\\scripting-layer" REGULAR_EXPRESSION "soh/Enhancements/scripting-layer/*")
 source_group("soh\\Enhancements\\item-tables" REGULAR_EXPRESSION "soh/Enhancements/item-tables/*")
 source_group("soh\\Enhancements\\randomizer" REGULAR_EXPRESSION "soh/Enhancements/randomizer/*")
 source_group("soh\\Enhancements\\randomizer\\3drando" REGULAR_EXPRESSION "soh/Enhancements/randomizer/3drando/*")
@@ -253,7 +254,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	endif()
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES 
+        XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES
         OUTPUT_NAME "soh-macos"
     )
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -476,7 +477,7 @@ if(MSVC)
                 /FORCE:MULTIPLE
             >
             /DEBUG;
-            /SUBSYSTEM:WINDOWS           
+            /SUBSYSTEM:WINDOWS
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
         target_link_options(${PROJECT_NAME} PRIVATE
@@ -602,8 +603,8 @@ endif()
 # Dependencies
 ################################################################################
 add_dependencies(${PROJECT_NAME}
-    ZAPDUtils
-    libultraship
+	ZAPDUtils
+	libultraship
 )
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -621,7 +622,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			"version;"
 			"setupapi"
 		)
-	elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32") 
+	elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
 		set(ADDITIONAL_LIBRARY_DEPENDENCIES
 			"libultraship;"
 			"ZAPDUtils;"
@@ -706,7 +707,7 @@ nx_generate_nacp(Ship.nacp
    AUTHOR "${PROJECT_TEAM}"
    VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
 )
- 
+
 nx_create_nro(soh
     NACP Ship.nacp
     ICON ${CMAKE_CURRENT_SOURCE_DIR}/icon.jpg
