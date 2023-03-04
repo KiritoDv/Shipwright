@@ -1,12 +1,12 @@
 #include "gamebridge.h"
 #include "luahost.h"
 #include "ImGuiImpl.h"
-#include <misc/Hooks.h>
 #include <filesystem>
 #include <fstream>
 #include "soh/Enhancements/scripting-layer/exceptions/gamebridgeexception.h"
 #include "soh/Enhancements/scripting-layer/exceptions/hostapiexception.h"
 #include "soh/Enhancements/scripting-layer/types/hostfunction.h"
+#include "soh/Enhancements/game-interactor/GameInteractor.h"
 
 static bool RunScript(const std::shared_ptr<Ship::Console>& console, const std::vector<std::string>& args) {
     if (args.size() > 1) {
@@ -70,8 +70,8 @@ void GameBridge::Initialize() {
         auto hook = method->GetArgument<std::string>(0);
         auto function = method->GetArgument<HostFunction*>(1);
         if(hook == "update"){
-            Ship::RegisterHook<Ship::GameUpdate>([function](){
-                try {
+            GameInteractor::Instance->RegisterGameHook<GameInteractor::OnGameFrameUpdate>([function]() {
+               try {
                     function->execute();
                 } catch (HostAPIException& e) {
                     SohImGui::GetConsole()->SendErrorMessage("Error while executing script: %s", e.what());
