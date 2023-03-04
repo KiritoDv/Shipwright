@@ -88,7 +88,7 @@ void LuaHost::Call(uintptr_t context, uintptr_t function, const std::vector<std:
     }
 
     if (lua_pcall(state, (int) arguments.size(), 0, 0) != 0) {
-        printf("Error: %s\n", lua_tostring(state, -1));
+        throw HostAPIException("Error while calling function: " + std::string(lua_tostring(state, -1)));
     }
 }
 
