@@ -6,6 +6,7 @@
 #include <cstdarg>
 #include <any>
 #include "soh/Enhancements/scripting-layer/hostapi.h"
+#include "soh/Enhancements/scripting-layer/exceptions/hostapiexception.h"
 
 class MethodCall;
 
@@ -23,15 +24,23 @@ struct GameBinding {
 class MethodCall {
 private:
     HostAPI* mHost;
-    void* mContext;
+    uintptr_t mContext;
     std::vector<std::any> mResult;
     bool mSuccess = false;
 public:
-    explicit MethodCall(HostAPI* host, void* context) : mHost(host), mContext(context) {}
+    explicit MethodCall(HostAPI* host, uintptr_t context) : mHost(host), mContext(context) {}
 
     template<typename T>
-    T GetArgument(int index){
-        return std::any_cast<T>(this->mHost->GetArgument(index, this->mContext));
+    T GetArgument(int index, bool force_string = false){
+        try {
+            return std::any_cast<T>(this->mHost->GetArgument(index, this->mContext, force_string));
+        } catch (const std::bad_any_cast& e) {
+            throw HostAPIException("Argument " + std::to_string(index) + " is not of type " + typeid(T).name());
+        }
+    }
+
+    std::any RawArgument(int index){
+        return this->mHost->GetArgument(index, this->mContext, false);
     }
 
     // Response methods

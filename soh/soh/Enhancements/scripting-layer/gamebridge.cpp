@@ -62,7 +62,7 @@ static bool KillScript(const std::shared_ptr<Ship::Console>& console, const std:
 void GameBridge::Initialize() {
     this->RegisterHost("lua", std::make_shared<LuaHost>());
     this->BindFunction("print", [](MethodCall *method) {
-        auto message = method->GetArgument<std::string>(0);
+        auto message = method->GetArgument<std::string>(0, true);
         SohImGui::GetConsole()->SendInfoMessage(message.c_str());
         method->success();
     });
@@ -71,7 +71,11 @@ void GameBridge::Initialize() {
         auto function = method->GetArgument<HostFunction*>(1);
         if(hook == "update"){
             Ship::RegisterHook<Ship::GameUpdate>([function](){
-                function->execute();
+                try {
+                    function->execute();
+                } catch (HostAPIException& e) {
+                    SohImGui::GetConsole()->SendErrorMessage("Error while executing script: %s", e.what());
+                }
             });
         }
         method->success();

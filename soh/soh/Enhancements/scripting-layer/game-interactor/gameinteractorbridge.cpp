@@ -69,7 +69,7 @@ void GameInteractorBridge::Initialize() {
     GameBridge::Instance->BindFunction("GI_SpawnEnemyWithOffset", [](MethodCall *method) {
         auto enemyId     = method->GetArgument<int>(0);
         auto enemyParams = method->GetArgument<int>(1);
-        auto result = GameInteractor::RawAction::SpawnEnemyWithOffset(enemyId, enemyParams);
+        int result = GameInteractor::RawAction::SpawnEnemyWithOffset(enemyId, enemyParams);
         method->success(result);
     });
 }

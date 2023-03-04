@@ -1,4 +1,6 @@
 #include "methodcall.h"
+
+#include <utility>
 #include "../hostapi.h"
 
 void MethodCall::success(){
@@ -6,17 +8,9 @@ void MethodCall::success(){
     this->mSuccess = true;
 }
 
-void MethodCall::success(std::any result, ...){
+void MethodCall::success(std::any result...){
     this->mSuccess = true;
-    va_list args;
-    va_start(args, result);
-    while(true){
-        auto arg = va_arg(args, std::any);
-        if(arg.type() == typeid(std::monostate)){
-            break;
-        }
-        this->mResult.emplace_back(std::move(arg));
-    }
+    this->mResult = { std::move(result) };
 }
 
 void MethodCall::error(const std::string& error){

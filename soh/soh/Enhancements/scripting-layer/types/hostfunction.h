@@ -6,11 +6,11 @@
 class HostFunction {
 private:
     HostAPI* mHost;
-    void* mContext;
-    void* mFunction;
+    uintptr_t mContext;
+    uintptr_t mFunction;
     std::vector<std::any> mArguments;
 public:
-    explicit HostFunction(HostAPI* host, void* context, void* function) : mHost(host), mContext(context), mFunction(function) {}
+    explicit HostFunction(HostAPI* host, uintptr_t context, uintptr_t function) : mHost(host), mContext(context), mFunction(function) {}
 
     void PushArgument(const std::any& argument);
     void execute();

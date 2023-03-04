@@ -26,9 +26,6 @@ static const luaL_Reg mLuaLibs[] = {
 };
 
 bool LuaHost::Initialize() {
-//    this->Bind("import", { BindingType::KFunction, [](MethodCall* call) {
-//        auto library =
-//    }});
     return true;
 }
 
@@ -39,19 +36,25 @@ void LuaHost::Bind(std::string name, GameBinding binding) {
         auto* api = (LuaHost*) lua_topointer(state, lua_upvalueindex(1));
         const auto* binding = (const GameBinding*) lua_topointer(state, lua_upvalueindex(2));
 
-        auto* result = new MethodCall(api, state);
+        auto* result = new MethodCall(api, (uintptr_t) state);
         binding->execute(result);
         std::vector<std::any> results = result->result();
         if (result->succeed()) {
             for (auto& value : results) {
                 if (IS_TYPE(std::string, value)) {
                     lua_pushstring(state, std::any_cast<std::string>(value).c_str());
-                } else if (IS_TYPE(int, value) || IS_TYPE(bool, value)) {
+                } else if (IS_TYPE(bool, value)) {
+                    lua_pushboolean(state, std::any_cast<bool>(value));
+                } else if (IS_TYPE(int, value)) {
                     lua_pushinteger(state, std::any_cast<int>(value));
                 } else if (IS_TYPE(double, value)) {
                     lua_pushnumber(state, std::any_cast<double>(value));
                 } else if (IS_TYPE(float, value)) {
                     lua_pushboolean(state, std::any_cast<int>(value));
+                } else if (IS_TYPE(std::monostate, value)) {
+                    lua_pushnil(state);
+                } else {
+                    throw HostAPIException("Unknown return type" + std::string(value.type().name()));
                 }
             }
         } else {
@@ -63,7 +66,7 @@ void LuaHost::Bind(std::string name, GameBinding binding) {
     mLuaFunctions.insert({ name, func });
 }
 
-void LuaHost::Call(void* context, void* function, const std::vector<std::any> &arguments) {
+void LuaHost::Call(uintptr_t context, uintptr_t function, const std::vector<std::any> &arguments) {
 
     auto* state = (lua_State*) context;
     auto func   = (char*) function;
@@ -73,7 +76,9 @@ void LuaHost::Call(void* context, void* function, const std::vector<std::any> &a
     for (auto& argument : arguments) {
         if (IS_TYPE(std::string, argument)) {
             lua_pushstring(state, std::any_cast<std::string>(argument).c_str());
-        } else if (IS_TYPE(int, argument) || IS_TYPE(bool, argument)) {
+        } else if(IS_TYPE(bool, argument)) {
+            lua_pushboolean(state, std::any_cast<bool>(argument));
+        } else if (IS_TYPE(int, argument)) {
             lua_pushinteger(state, std::any_cast<int>(argument));
         } else if (IS_TYPE(double, argument)) {
             lua_pushnumber(state, std::any_cast<double>(argument));
@@ -87,16 +92,16 @@ void LuaHost::Call(void* context, void* function, const std::vector<std::any> &a
     }
 }
 
-std::any LuaHost::GetArgument(int index, void* context) {
+std::any LuaHost::GetArgument(int index, uintptr_t context, bool force_string) {
     auto* state = (lua_State*) context;
     index += 1;
 
-    if (lua_isstring(state, index)) {
-        std::string str = luaL_checkstring(state, index);
-        if(str.starts_with("func:")){
-            return new HostFunction(this, state, strdup(str.substr(5).c_str()));
-        }
-        return str;
+    if(force_string){
+        return std::string(luaL_checkstring(state, index));
+    }
+
+    if (lua_isinteger(state, index)) {
+        return (int) luaL_checkinteger(state, index);
     }
 
     if (lua_isnumber(state, index)) {
@@ -111,7 +116,15 @@ std::any LuaHost::GetArgument(int index, void* context) {
         return nullptr;
     }
 
-    throw HostAPIException("Unknown argument type");
+    if (lua_isstring(state, index)) {
+        std::string str = luaL_checkstring(state, index);
+        if(str.starts_with("func:")){
+            return new HostFunction(this, (uintptr_t) state, (uintptr_t) strdup(str.substr(5).c_str()));
+        }
+        return str;
+    }
+
+    throw HostAPIException("Unknown argument type: " + std::string(typeid(index).name()));
 }
 
 uint16_t LuaHost::Execute(const std::string& script) {
