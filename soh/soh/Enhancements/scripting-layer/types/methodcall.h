@@ -4,12 +4,11 @@
 #include <vector>
 #include <variant>
 #include <cstdarg>
+#include <any>
+#include "soh/Enhancements/scripting-layer/hostapi.h"
 
-class HostAPI;
 class MethodCall;
 
-typedef std::variant<std::monostate, std::string, int32_t, double, float> AllowedTypes;
-typedef std::variant<std::monostate, std::string, int32_t, double, float, std::vector<AllowedTypes>> ResultType;
 typedef void (*FunctionPtr)(MethodCall*);
 
 enum class BindingType {
@@ -25,23 +24,26 @@ class MethodCall {
 private:
     HostAPI* mHost;
     void* mContext;
-    std::vector<ResultType> mResult;
+    std::vector<std::any> mResult;
     bool mSuccess = false;
 public:
     explicit MethodCall(HostAPI* host, void* context) : mHost(host), mContext(context) {}
 
-    AllowedTypes getArgument(int index);
+    template<typename T>
+    T GetArgument(int index){
+        return std::any_cast<T>(this->mHost->GetArgument(index, this->mContext));
+    }
 
     // Response methods
     void success();
-    void success(ResultType result, ...);
+    void success(std::any result, ...);
     void error(const std::string& error);
 
     [[nodiscard]] bool succeed() const {
         return this->mSuccess;
     }
 
-    [[nodiscard]] std::vector<ResultType> result() const {
+    [[nodiscard]] std::vector<std::any> result() const {
         return this->mResult;
     }
 };

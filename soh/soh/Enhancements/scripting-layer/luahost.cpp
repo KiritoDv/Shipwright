@@ -1,7 +1,8 @@
 #include "luahost.h"
+#include "soh/Enhancements/scripting-layer/exceptions/hostapiexception.h"
+#include "soh/Enhancements/scripting-layer/types/methodcall.h"
 
 #include <unordered_map>
-#include <functional>
 #include <stdexcept>
 
 extern "C" {
@@ -20,58 +21,68 @@ static const luaL_Reg mLuaLibs[] = {
     { LUA_STRLIBNAME, luaopen_string },
     { LUA_MATHLIBNAME, luaopen_math },
     { LUA_DBLIBNAME, luaopen_debug },
-    { LUA_UTF8LIBNAME, luaopen_utf8 },
     { nullptr, nullptr }
 };
 
-void LuaHost::Initialize() {
-
+bool LuaHost::Initialize() {
+//    this->Bind("import", { BindingType::KFunction, [](MethodCall* call) {
+//        auto library =
+//    }});
+    return true;
 }
 
-void LuaHost::Bind(std::pair<std::string, GameBinding> binding) {
-    mBindings.insert(binding);
+void LuaHost::Bind(std::string name, GameBinding binding) {
+    mBindings[name] = binding;
 
     LuaFunction func = [](lua_State* state) -> int {
-        auto *api = (LuaHost*) lua_topointer(state, lua_upvalueindex(1));
-        const auto *binding = (const GameBinding*) lua_topointer(state, lua_upvalueindex(2));
+        auto* api = (LuaHost*) lua_topointer(state, lua_upvalueindex(1));
+        const auto* binding = (const GameBinding*) lua_topointer(state, lua_upvalueindex(2));
 
         auto* result = new MethodCall(api, state);
         binding->execute(result);
-        std::vector<ResultType> results = result->result();
+        std::vector<std::any> results = result->result();
         if (result->succeed()) {
             for (auto& value : results) {
-                if (value.index() == 1) {
-                    lua_pushstring(state, std::get<std::string>(value).c_str());
-                } else if (value.index() == 2) {
-                    lua_pushinteger(state, std::get<int>(value));
-                } else if (value.index() == 3) {
-                    lua_pushnumber(state, std::get<double>(value));
-                } else if (value.index() == 4) {
-                    lua_pushboolean(state, std::get<int>(value));
+                if (IS_TYPE(std::string, value)) {
+                    lua_pushstring(state, std::any_cast<std::string>(value).c_str());
+                } else if (IS_TYPE(int, value) || IS_TYPE(bool, value)) {
+                    lua_pushinteger(state, std::any_cast<int>(value));
+                } else if (IS_TYPE(double, value)) {
+                    lua_pushnumber(state, std::any_cast<double>(value));
+                } else if (IS_TYPE(float, value)) {
+                    lua_pushboolean(state, std::any_cast<int>(value));
                 }
             }
         } else {
-            lua_pushstring(state, std::get<std::string>(results[0]).c_str());
+            lua_pushstring(state, std::any_cast<std::string>(results[0]).c_str());
         }
         return (int) results.size();
     };
 
-    mLuaFunctions.insert({ binding.first, func });
+    mLuaFunctions.insert({ name, func });
 }
 
-AllowedTypes LuaHost::GetArgument(int index, void* context) {
+std::any LuaHost::GetArgument(int index, void* context) {
     auto* state = (lua_State*) context;
     index += 1;
 
     if (lua_isstring(state, index)) {
-        return luaL_checkstring(state, index);
+        return std::string(luaL_checkstring(state, index));
     }
 
     if (lua_isnumber(state, index)) {
         return luaL_checknumber(state, index);
     }
 
-    return nullptr;
+    if (lua_isboolean(state, index)) {
+        return luaL_checkinteger(state, index);
+    }
+
+    if (lua_isnoneornil(state, index)) {
+        return nullptr;
+    }
+
+    throw HostAPIException("Unknown argument type");
 }
 
 uint16_t LuaHost::Execute(const std::string& script) {
@@ -84,7 +95,6 @@ uint16_t LuaHost::Execute(const std::string& script) {
         lua_call(state, 1, 0);
     }
 
-
     for (auto& func : mLuaFunctions) {
         lua_pushlightuserdata(state, this);
         lua_pushlightuserdata(state, &this->mBindings[func.first]);
@@ -94,19 +104,18 @@ uint16_t LuaHost::Execute(const std::string& script) {
 
     const int ret = luaL_dostring(state, script.c_str());
     if (ret != LUA_OK) {
-        const char *error = lua_tostring(state, -1);
-        printf("Lua Error: %s \n", error);
+        std::string error(lua_tostring(state, -1));
         lua_close(state);
-        return 0;
+        throw HostAPIException(error);
     }
 
     mLuaStates.push_back(state);
     return (uint16_t) mLuaStates.size();
 }
 
-bool LuaHost::Kill(uint16_t pid) {
+void LuaHost::Kill(uint16_t pid) {
     if (pid > mLuaStates.size()) {
-        return false;
+        return;
     }
     lua_close(mLuaStates[pid]);
     mLuaStates.erase(mLuaStates.begin() + pid);
