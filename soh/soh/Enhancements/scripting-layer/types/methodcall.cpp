@@ -1,7 +1,6 @@
 #include "methodcall.h"
 
 #include <utility>
-#include "../hostapi.h"
 
 void MethodCall::success(){
     this->mResult.emplace_back(std::monostate());

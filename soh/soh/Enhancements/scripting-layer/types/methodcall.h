@@ -13,12 +13,13 @@ class MethodCall;
 typedef void (*FunctionPtr)(MethodCall*);
 
 enum class BindingType {
-    KFunction
+    KFunction,
+    KField
 };
 
 struct GameBinding {
     BindingType type;
-    FunctionPtr execute;
+    std::variant<FunctionPtr, std::any> binding;
     ModName modName;
 };
 

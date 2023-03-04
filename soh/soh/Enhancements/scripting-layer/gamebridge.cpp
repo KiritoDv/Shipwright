@@ -115,8 +115,14 @@ void GameBridge::RegisterHost(const std::string& name, std::shared_ptr<HostAPI> 
     this->hosts[name] = std::move(host);
 }
 
+void GameBridge::BindField(const std::string& name, const std::any& field, const std::variant<std::string, std::monostate>& mod_name){
+    for(auto& host : this->hosts){
+        host.second->Bind(name, { BindingType::KField, field, mod_name });
+    }
+}
+
 void GameBridge::BindFunction(const std::string& name, FunctionPtr function, const std::variant<std::string, std::monostate>& mod_name){
     for(auto& host : this->hosts){
-        host.second->Bind(name, { BindingType::KFunction, function, mod_name});
+        host.second->Bind(name, { BindingType::KFunction, function, mod_name });
     }
 }

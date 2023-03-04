@@ -12,9 +12,19 @@ extern "C" {
 #include <lua/lauxlib.h>
 }
 
-typedef int(*LuaFunction)(lua_State*) ;
-std::unordered_map<ModName, std::unordered_map<std::string, LuaFunction>> mLuaFunctions;
+typedef int(*LuaFunction)(lua_State*);
+typedef std::variant<LuaFunction, std::any> LuaBinding;
+std::unordered_map<ModName, std::unordered_map<std::string, LuaBinding>> mLuaBindings;
 std::vector<lua_State*> mLuaStates;
+
+const char* tryCatchImpl = R"(
+function try(f, catch_f)
+    local status, exception = pcall(f)
+    if not status then
+        catch_f(exception)
+    end
+end
+)";
 
 static const luaL_Reg mLuaLibs[] = {
     { "", luaopen_base },
@@ -29,41 +39,55 @@ bool LuaHost::Initialize() {
     return true;
 }
 
+void LuaHost::PushIntoLua(uintptr_t context, const std::any& value){
+    auto* state = (lua_State*) context;
+
+    if (IS_TYPE(std::string, value)) {
+        lua_pushstring(state, std::any_cast<std::string>(value).c_str());
+    } else if (IS_TYPE(bool, value)) {
+        lua_pushboolean(state, std::any_cast<bool>(value));
+    } else if (IS_TYPE(int, value)) {
+        lua_pushinteger(state, std::any_cast<int>(value));
+    } else if (IS_TYPE(double, value)) {
+        lua_pushnumber(state, std::any_cast<double>(value));
+    } else if (IS_TYPE(float, value)) {
+        lua_pushboolean(state, std::any_cast<int>(value));
+    } else if (IS_TYPE(std::monostate, value)) {
+        lua_pushnil(state);
+    } else {
+        throw HostAPIException("Unknown type" + std::string(value.type().name()));
+    }
+}
+
 void LuaHost::Bind(std::string name, GameBinding binding) {
     mBindings[name] = binding;
+    if (binding.type == BindingType::KFunction) {
+        LuaFunction func = [](lua_State* state) -> int {
+            auto* api = (LuaHost*) lua_topointer(state, lua_upvalueindex(1));
+            const auto* binding = (const GameBinding*) lua_topointer(state, lua_upvalueindex(2));
 
-    LuaFunction func = [](lua_State* state) -> int {
-        auto* api = (LuaHost*) lua_topointer(state, lua_upvalueindex(1));
-        const auto* binding = (const GameBinding*) lua_topointer(state, lua_upvalueindex(2));
+            auto* result = new MethodCall(api, (uintptr_t) state);
+            auto execute = std::get<FunctionPtr>(binding->binding);
+            execute(result);
 
-        auto* result = new MethodCall(api, (uintptr_t) state);
-        binding->execute(result);
-        std::vector<std::any> results = result->result();
-        if (result->succeed()) {
-            for (auto& value : results) {
-                if (IS_TYPE(std::string, value)) {
-                    lua_pushstring(state, std::any_cast<std::string>(value).c_str());
-                } else if (IS_TYPE(bool, value)) {
-                    lua_pushboolean(state, std::any_cast<bool>(value));
-                } else if (IS_TYPE(int, value)) {
-                    lua_pushinteger(state, std::any_cast<int>(value));
-                } else if (IS_TYPE(double, value)) {
-                    lua_pushnumber(state, std::any_cast<double>(value));
-                } else if (IS_TYPE(float, value)) {
-                    lua_pushboolean(state, std::any_cast<int>(value));
-                } else if (IS_TYPE(std::monostate, value)) {
-                    lua_pushnil(state);
-                } else {
-                    throw HostAPIException("Unknown return type" + std::string(value.type().name()));
+            std::vector<std::any> results = result->result();
+            if (result->succeed()) {
+                for (auto& value : results) {
+                    LuaHost::PushIntoLua((uintptr_t) state, value);
                 }
+            } else {
+                luaL_error(state, std::any_cast<std::string>(results[0]).c_str());
             }
-        } else {
-            lua_pushstring(state, std::any_cast<std::string>(results[0]).c_str());
-        }
-        return (int) results.size();
-    };
+            return (int) results.size();
+        };
 
-    mLuaFunctions[binding.modName].insert({ name, func });
+        mLuaBindings[binding.modName].insert({ name, func });
+        return;
+    }
+
+    if (binding.type == BindingType::KField) {
+        mLuaBindings[binding.modName].insert({ name, std::get<std::any>(binding.binding) });
+    }
 }
 
 void LuaHost::Call(uintptr_t context, uintptr_t function, const std::vector<std::any> &arguments) {
@@ -74,17 +98,7 @@ void LuaHost::Call(uintptr_t context, uintptr_t function, const std::vector<std:
     lua_getglobal(state, func);
 
     for (auto& argument : arguments) {
-        if (IS_TYPE(std::string, argument)) {
-            lua_pushstring(state, std::any_cast<std::string>(argument).c_str());
-        } else if(IS_TYPE(bool, argument)) {
-            lua_pushboolean(state, std::any_cast<bool>(argument));
-        } else if (IS_TYPE(int, argument)) {
-            lua_pushinteger(state, std::any_cast<int>(argument));
-        } else if (IS_TYPE(double, argument)) {
-            lua_pushnumber(state, std::any_cast<double>(argument));
-        } else if (IS_TYPE(float, argument)) {
-            lua_pushboolean(state, std::any_cast<int>(argument));
-        }
+        LuaHost::PushIntoLua((uintptr_t) state, argument);
     }
 
     if (lua_pcall(state, (int) arguments.size(), 0, 0) != 0) {
@@ -137,19 +151,28 @@ uint16_t LuaHost::Execute(const std::string& script) {
         lua_call(state, 1, 0);
     }
 
-    for (auto& [mod, functions] : mLuaFunctions) {
+    for (auto& [mod, functions] : mLuaBindings) {
 
         bool isModule = mod.index() == 0;
 
         if(isModule){
             luaL_checkversion(state);
-            lua_createtable(state, 0, functions.size() - 1);
+            lua_createtable(state, 0, (int) (functions.size() - 1));
         }
 
         for (auto& func : functions) {
-            lua_pushlightuserdata(state, this);
-            lua_pushlightuserdata(state, &this->mBindings[func.first]);
-            lua_pushcclosure(state, func.second, 2);
+
+            LuaBinding binding = func.second;
+
+            if(binding.index() == 0){
+                lua_pushlightuserdata(state, this);
+                lua_pushlightuserdata(state, &this->mBindings[func.first]);
+                lua_pushcclosure(state, std::get<LuaFunction>(binding), 2);
+            } else {
+                auto value = std::get<std::any>(binding);
+                LuaHost::PushIntoLua((uintptr_t) state, value);
+            }
+
             if(isModule) {
                 lua_setfield(state, -2, func.first.c_str());
             } else {
@@ -161,6 +184,8 @@ uint16_t LuaHost::Execute(const std::string& script) {
             lua_setglobal(state, std::get<std::string>(mod).c_str());
         }
     }
+
+    luaL_dostring(state, tryCatchImpl);
 
     const int ret = luaL_dostring(state, script.c_str());
     if (ret != LUA_OK) {

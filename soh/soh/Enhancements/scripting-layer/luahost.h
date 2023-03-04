@@ -13,4 +13,7 @@ public:
     std::any GetArgument(int index, uintptr_t context, bool force_string) override;
     uint16_t Execute(const std::string& script) override;
     void Kill(uint16_t pid) override;
+
+    // LuaHost specific methods
+    static void PushIntoLua(uintptr_t state, const std::any& value);
 };

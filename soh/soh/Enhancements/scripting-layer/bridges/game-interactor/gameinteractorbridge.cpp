@@ -1,4 +1,5 @@
 #include "gameinteractorbridge.h"
+#include "soh/Enhancements/scripting-layer/gamebridge.h"
 #include "soh/Enhancements/game-interactor/GameInteractor.h"
 
 void GameInteractorBridge::Initialize() {

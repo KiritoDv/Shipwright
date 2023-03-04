@@ -18,6 +18,7 @@ public:
     static GameBridge* Instance;
     void Initialize();
     uint16_t Execute(const std::string& script, const std::string& hostname);
+    void BindField(const std::string& name, const std::any& field, const std::variant<std::string, std::monostate>& mod_name = std::monostate());
     void BindFunction(const std::string& name, FunctionPtr function, const std::variant<std::string, std::monostate>& mod_name = std::monostate());
     void Kill(uint16_t pid);
 };

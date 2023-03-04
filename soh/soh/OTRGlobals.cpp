@@ -106,7 +106,8 @@ CrowdControl* CrowdControl::Instance;
 #include "soh/resource/importer/SkeletonLimbFactory.h"
 #include "soh/resource/importer/TextFactory.h"
 #include "soh/resource/importer/BackgroundFactory.h"
-#include "soh/Enhancements/scripting-layer/game-interactor/gameinteractorbridge.h"
+#include "soh/Enhancements/scripting-layer/bridges/game-interactor/gameinteractorbridge.h"
+#include "soh/Enhancements/scripting-layer/bridges/n64-native/n64bridge.h"
 
 OTRGlobals* OTRGlobals::Instance;
 SaveManager* SaveManager::Instance;
@@ -593,7 +594,8 @@ extern "C" void InitOTR() {
 #endif
 
     GameBridge::Instance = new GameBridge();
-    (new GameInteractorBridge())->Initialize();
+    GameInteractorBridge::Initialize();
+    N64Bridge::Initialize();
 
     clearMtx = (uintptr_t)&gMtxClear;
     OTRMessage_Init();
