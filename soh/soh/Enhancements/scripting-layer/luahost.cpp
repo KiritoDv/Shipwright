@@ -1,6 +1,7 @@
 #include "luahost.h"
 #include "soh/Enhancements/scripting-layer/exceptions/hostapiexception.h"
 #include "soh/Enhancements/scripting-layer/types/methodcall.h"
+#include "soh/Enhancements/scripting-layer/types/hostfunction.h"
 
 #include <unordered_map>
 #include <stdexcept>
@@ -62,12 +63,40 @@ void LuaHost::Bind(std::string name, GameBinding binding) {
     mLuaFunctions.insert({ name, func });
 }
 
+void LuaHost::Call(void* context, void* function, const std::vector<std::any> &arguments) {
+
+    auto* state = (lua_State*) context;
+    auto func   = (char*) function;
+
+    lua_getglobal(state, func);
+
+    for (auto& argument : arguments) {
+        if (IS_TYPE(std::string, argument)) {
+            lua_pushstring(state, std::any_cast<std::string>(argument).c_str());
+        } else if (IS_TYPE(int, argument) || IS_TYPE(bool, argument)) {
+            lua_pushinteger(state, std::any_cast<int>(argument));
+        } else if (IS_TYPE(double, argument)) {
+            lua_pushnumber(state, std::any_cast<double>(argument));
+        } else if (IS_TYPE(float, argument)) {
+            lua_pushboolean(state, std::any_cast<int>(argument));
+        }
+    }
+
+    if (lua_pcall(state, (int) arguments.size(), 0, 0) != 0) {
+        printf("Error: %s\n", lua_tostring(state, -1));
+    }
+}
+
 std::any LuaHost::GetArgument(int index, void* context) {
     auto* state = (lua_State*) context;
     index += 1;
 
     if (lua_isstring(state, index)) {
-        return std::string(luaL_checkstring(state, index));
+        std::string str = luaL_checkstring(state, index);
+        if(str.starts_with("func:")){
+            return new HostFunction(this, state, strdup(str.substr(5).c_str()));
+        }
+        return str;
     }
 
     if (lua_isnumber(state, index)) {
@@ -110,7 +139,7 @@ uint16_t LuaHost::Execute(const std::string& script) {
     }
 
     mLuaStates.push_back(state);
-    return (uint16_t) mLuaStates.size();
+    return (uint16_t) mLuaStates.size() - 1;
 }
 
 void LuaHost::Kill(uint16_t pid) {

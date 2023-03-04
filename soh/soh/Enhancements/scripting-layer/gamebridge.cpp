@@ -1,11 +1,12 @@
 #include "gamebridge.h"
 #include "luahost.h"
 #include "ImGuiImpl.h"
-#include "soh/Enhancements/scripting-layer/types/methodcall.h"
-#include "soh/Enhancements/scripting-layer/exceptions/gamebridgeexception.h"
-#include "soh/Enhancements/scripting-layer/exceptions/hostapiexception.h"
+#include <misc/Hooks.h>
 #include <filesystem>
 #include <fstream>
+#include "soh/Enhancements/scripting-layer/exceptions/gamebridgeexception.h"
+#include "soh/Enhancements/scripting-layer/exceptions/hostapiexception.h"
+#include "soh/Enhancements/scripting-layer/types/hostfunction.h"
 
 static bool RunScript(const std::shared_ptr<Ship::Console>& console, const std::vector<std::string>& args) {
     if (args.size() > 1) {
@@ -43,6 +44,21 @@ static bool RunScript(const std::shared_ptr<Ship::Console>& console, const std::
     return CMD_SUCCESS;
 }
 
+static bool KillScript(const std::shared_ptr<Ship::Console>& console, const std::vector<std::string>& args) {
+    if (args.size() > 1) {
+        try {
+            uint16_t pid = std::stoi(args[1]);
+            GameBridge::Instance->Kill(pid);
+            console->SendInfoMessage("Script with pid %d killed", pid);
+        } catch (std::invalid_argument& e) {
+            console->SendErrorMessage("Invalid pid: %s", args[1].c_str());
+        }
+    } else {
+        console->SendErrorMessage("Usage: kill <pid>");
+    }
+    return CMD_SUCCESS;
+}
+
 void GameBridge::Initialize() {
     this->RegisterHost("lua", std::make_shared<LuaHost>());
     this->BindFunction("print", [](MethodCall *method) {
@@ -50,8 +66,21 @@ void GameBridge::Initialize() {
         SohImGui::GetConsole()->SendInfoMessage(message.c_str());
         method->success();
     });
+    this->BindFunction("hook", [](MethodCall *method) {
+        auto hook = method->GetArgument<std::string>(0);
+        auto function = method->GetArgument<HostFunction*>(1);
+        if(hook == "update"){
+            Ship::RegisterHook<Ship::GameUpdate>([function](){
+                function->execute();
+            });
+        }
+        method->success();
+    });
     SohImGui::GetConsole()->AddCommand("run", { RunScript, "Tries to execute an script", {
         { "path", Ship::ArgumentType::TEXT, true }
+    }});
+    SohImGui::GetConsole()->AddCommand("stop", { KillScript, "Tries to kill a program with its pid", {
+        { "pid", Ship::ArgumentType::NUMBER, true }
     }});
 }
 

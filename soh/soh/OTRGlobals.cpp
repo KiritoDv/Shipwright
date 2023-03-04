@@ -106,6 +106,7 @@ CrowdControl* CrowdControl::Instance;
 #include "soh/resource/importer/SkeletonLimbFactory.h"
 #include "soh/resource/importer/TextFactory.h"
 #include "soh/resource/importer/BackgroundFactory.h"
+#include "soh/Enhancements/scripting-layer/game-interactor/gameinteractorbridge.h"
 
 OTRGlobals* OTRGlobals::Instance;
 SaveManager* SaveManager::Instance;
@@ -592,6 +593,7 @@ extern "C" void InitOTR() {
 #endif
 
     GameBridge::Instance = new GameBridge();
+    (new GameInteractorBridge())->Initialize();
 
     clearMtx = (uintptr_t)&gMtxClear;
     OTRMessage_Init();

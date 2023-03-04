@@ -226,7 +226,7 @@ set(ALL_FILES
     ${soh__Enhancements}
     ${soh__Resource}
     ${src__}
-		soh/Enhancements/scripting-layer/extensions/mooncompiler.cpp soh/Enhancements/scripting-layer/extensions/mooncompiler.h soh/Enhancements/scripting-layer/exceptions/gamebridgeexception.h)
+		soh/Enhancements/scripting-layer/game-interactor/gameinteractorbridge.cpp soh/Enhancements/scripting-layer/game-interactor/gameinteractorbridge.h soh/Enhancements/scripting-layer/types/hostfunction.cpp soh/Enhancements/scripting-layer/types/hostfunction.h)
 
 ################################################################################
 # Target

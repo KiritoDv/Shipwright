@@ -9,6 +9,7 @@ private:
 public:
     bool Initialize() override;
     void Bind(std::string name, GameBinding binding) override;
+    void Call(void* context, void* function, const std::vector<std::any>& arguments) override;
     std::any GetArgument(int index, void* context) override;
     uint16_t Execute(const std::string& script) override;
     void Kill(uint16_t pid) override;
