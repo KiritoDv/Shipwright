@@ -19,6 +19,7 @@ enum class BindingType {
 struct GameBinding {
     BindingType type;
     FunctionPtr execute;
+    ModName modName;
 };
 
 class MethodCall {
@@ -45,7 +46,7 @@ public:
 
     // Response methods
     void success();
-    void success(std::any result, ...);
+    void success(std::any result...);
     void error(const std::string& error);
 
     [[nodiscard]] bool succeed() const {

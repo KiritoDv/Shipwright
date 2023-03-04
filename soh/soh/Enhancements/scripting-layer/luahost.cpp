@@ -13,7 +13,7 @@ extern "C" {
 }
 
 typedef int(*LuaFunction)(lua_State*) ;
-std::unordered_map<std::string, LuaFunction> mLuaFunctions;
+std::unordered_map<ModName, std::unordered_map<std::string, LuaFunction>> mLuaFunctions;
 std::vector<lua_State*> mLuaStates;
 
 static const luaL_Reg mLuaLibs[] = {
@@ -63,7 +63,7 @@ void LuaHost::Bind(std::string name, GameBinding binding) {
         return (int) results.size();
     };
 
-    mLuaFunctions.insert({ name, func });
+    mLuaFunctions[binding.modName].insert({ name, func });
 }
 
 void LuaHost::Call(uintptr_t context, uintptr_t function, const std::vector<std::any> &arguments) {
@@ -137,11 +137,29 @@ uint16_t LuaHost::Execute(const std::string& script) {
         lua_call(state, 1, 0);
     }
 
-    for (auto& func : mLuaFunctions) {
-        lua_pushlightuserdata(state, this);
-        lua_pushlightuserdata(state, &this->mBindings[func.first]);
-        lua_pushcclosure(state, func.second, 2);
-        lua_setglobal(state, func.first.c_str());
+    for (auto& [mod, functions] : mLuaFunctions) {
+
+        bool isModule = mod.index() == 0;
+
+        if(isModule){
+            luaL_checkversion(state);
+            lua_createtable(state, 0, functions.size() - 1);
+        }
+
+        for (auto& func : functions) {
+            lua_pushlightuserdata(state, this);
+            lua_pushlightuserdata(state, &this->mBindings[func.first]);
+            lua_pushcclosure(state, func.second, 2);
+            if(isModule) {
+                lua_setfield(state, -2, func.first.c_str());
+            } else {
+                lua_setglobal(state, func.first.c_str());
+            }
+        }
+
+        if(isModule){
+            lua_setglobal(state, std::get<std::string>(mod).c_str());
+        }
     }
 
     const int ret = luaL_dostring(state, script.c_str());

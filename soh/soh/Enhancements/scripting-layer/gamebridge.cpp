@@ -4,7 +4,6 @@
 #include <filesystem>
 #include <fstream>
 #include "soh/Enhancements/scripting-layer/exceptions/gamebridgeexception.h"
-#include "soh/Enhancements/scripting-layer/exceptions/hostapiexception.h"
 #include "soh/Enhancements/scripting-layer/types/hostfunction.h"
 #include "soh/Enhancements/game-interactor/GameInteractor.h"
 
@@ -79,7 +78,7 @@ void GameBridge::Initialize() {
             });
         }
         method->success();
-    });
+    }, "game");
     SohImGui::GetConsole()->AddCommand("run", { RunScript, "Tries to execute an script", {
         { "path", Ship::ArgumentType::TEXT, true }
     }});
@@ -116,9 +115,8 @@ void GameBridge::RegisterHost(const std::string& name, std::shared_ptr<HostAPI> 
     this->hosts[name] = std::move(host);
 }
 
-void GameBridge::BindFunction(const std::string& name, FunctionPtr function){
-    this->bindings[name] = { BindingType::KFunction, function };
+void GameBridge::BindFunction(const std::string& name, FunctionPtr function, const std::variant<std::string, std::monostate>& mod_name){
     for(auto& host : this->hosts){
-        host.second->Bind(name, this->bindings[name]);
+        host.second->Bind(name, { BindingType::KFunction, function, mod_name});
     }
 }
