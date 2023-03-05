@@ -79,6 +79,11 @@ void LuaHost::Bind(std::string name, GameBinding binding) {
             execute(result);
 
             std::vector<std::any> results = result->result();
+
+            if(results.empty()){
+                throw HostAPIException("No results returned from function");
+            }
+
             if (result->succeed()) {
                 for (auto& value : results) {
                     LuaHost::PushIntoLua((uintptr_t) state, value);
@@ -114,13 +119,9 @@ void LuaHost::Call(uintptr_t context, uintptr_t function, const std::vector<std:
     }
 }
 
-std::any LuaHost::GetArgument(int index, uintptr_t context, bool force_string) {
+std::any LuaHost::GetArgument(int index, uintptr_t context) {
     auto* state = (lua_State*) context;
     index += 1;
-
-    if(force_string) {
-        return std::string(luaL_checkstring(state, index));
-    }
 
     if (lua_isinteger(state, index)) {
         return (int) luaL_checkinteger(state, index);

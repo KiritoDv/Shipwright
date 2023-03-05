@@ -33,16 +33,16 @@ public:
     explicit MethodCall(HostAPI* host, uintptr_t context) : mHost(host), mContext(context) {}
 
     template<typename T>
-    T GetArgument(int index, bool force_string = false){
+    T GetArgument(int index){
         try {
-            return std::any_cast<T>(this->mHost->GetArgument(index, this->mContext, force_string));
+            return std::any_cast<T>(this->mHost->GetArgument(index, this->mContext));
         } catch (const std::bad_any_cast& e) {
             throw HostAPIException("Argument " + std::to_string(index) + " is not of type " + typeid(T).name());
         }
     }
 
     std::any RawArgument(int index){
-        return this->mHost->GetArgument(index, this->mContext, false);
+        return this->mHost->GetArgument(index, this->mContext);
     }
 
     size_t ArgumentCount(){

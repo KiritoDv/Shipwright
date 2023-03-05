@@ -64,7 +64,21 @@ void GameBridge::Initialize() {
         size_t count = method->ArgumentCount();
         std::stringstream message;
         for(size_t i = 0; i < count; i++) {
-            message << " " << method->GetArgument<std::string>(i, true);
+            message << " ";
+            std::any value = method->RawArgument(i);
+            if (IS_TYPE(std::string, value)) {
+                message << std::any_cast<std::string>(value);
+            } else if (IS_TYPE(bool, value)) {
+                message << (std::any_cast<bool>(value) ? "true" : "false");
+            } else if (IS_TYPE(int, value)) {
+                message << std::any_cast<int>(value);
+            } else if (IS_TYPE(double, value)) {
+                message << std::any_cast<double>(value);
+            } else if (IS_TYPE(std::monostate, value) || IS_TYPE(nullptr, value)) {
+                message << "null";
+            } else {
+                message << "unknown[" << value.type().name() << "]";
+            }
         }
         SohImGui::GetConsole()->SendInfoMessage(message.str().c_str());
         method->success();
