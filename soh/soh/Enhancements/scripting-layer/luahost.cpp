@@ -52,7 +52,15 @@ void LuaHost::PushIntoLua(uintptr_t context, const std::any& value){
         lua_pushnumber(state, std::any_cast<double>(value));
     } else if (IS_TYPE(float, value)) {
         lua_pushboolean(state, std::any_cast<int>(value));
-    } else if (IS_TYPE(std::monostate, value)) {
+    } else if (IS_TYPE(std::vector<std::any>, value)) {
+        lua_newtable(state);
+        int index = 1;
+        for (auto& item : std::any_cast<std::vector<std::any>>(value)) {
+            printf("Pushing into lua: %s\n", item.type().name());
+            PushIntoLua(context, item);
+            lua_rawseti(state, -2, index++);
+        }
+    } else if (IS_TYPE(std::monostate, value) || IS_TYPE(nullptr, value)) {
         lua_pushnil(state);
     } else {
         throw HostAPIException("Unknown type" + std::string(value.type().name()));
@@ -110,7 +118,7 @@ std::any LuaHost::GetArgument(int index, uintptr_t context, bool force_string) {
     auto* state = (lua_State*) context;
     index += 1;
 
-    if(force_string){
+    if(force_string) {
         return std::string(luaL_checkstring(state, index));
     }
 
@@ -139,6 +147,11 @@ std::any LuaHost::GetArgument(int index, uintptr_t context, bool force_string) {
     }
 
     throw HostAPIException("Unknown argument type: " + std::string(typeid(index).name()));
+}
+
+size_t LuaHost::GetArgumentCount(uintptr_t context) {
+    auto* state = (lua_State*) context;
+    return lua_gettop(state);
 }
 
 uint16_t LuaHost::Execute(const std::string& script) {

@@ -45,6 +45,10 @@ public:
         return this->mHost->GetArgument(index, this->mContext, false);
     }
 
+    size_t ArgumentCount(){
+        return this->mHost->GetArgumentCount(this->mContext);
+    }
+
     // Response methods
     void success();
     void success(std::any result...);
