@@ -5,33 +5,33 @@
 #include "soh/Enhancements/scripting-layer/types/hostfunction.h"
 
 void BindUIWidgets(){
-    GameBridge::Instance->BindFunction("WrappedText", [](MethodCall *method) {
+    GameBridge::Instance->BindFunction("WrappedText", [](uintptr_t ctx, MethodCall* method) {
         auto text = method->GetArgument<std::string>(0);
         auto charactersPerLine = method->GetArgument<int>(1);
         auto result = UIWidgets::WrappedText(text, charactersPerLine);
         method->success(std::string(result));
     }, "UIWidgets");
-    GameBridge::Instance->BindFunction("SetLastItemHoverText", [](MethodCall *method) {
+    GameBridge::Instance->BindFunction("SetLastItemHoverText", [](uintptr_t ctx, MethodCall* method) {
         auto text = method->GetArgument<std::string>(0);
         UIWidgets::SetLastItemHoverText(text);
         method->success();
     }, "UIWidgets");
-    GameBridge::Instance->BindFunction("InsertHelpHoverText", [](MethodCall *method) {
+    GameBridge::Instance->BindFunction("InsertHelpHoverText", [](uintptr_t ctx, MethodCall* method) {
         auto text = method->GetArgument<std::string>(0);
         UIWidgets::InsertHelpHoverText(text);
         method->success();
     }, "UIWidgets");
-    GameBridge::Instance->BindFunction("Tooltip", [](MethodCall *method) {
+    GameBridge::Instance->BindFunction("Tooltip", [](uintptr_t ctx, MethodCall* method) {
         auto text = method->GetArgument<std::string>(0);
         UIWidgets::Tooltip(text.c_str());
         method->success();
     }, "UIWidgets");
-    GameBridge::Instance->BindFunction("Tooltip", [](MethodCall *method) {
+    GameBridge::Instance->BindFunction("Tooltip", [](uintptr_t ctx, MethodCall* method) {
         auto text = method->GetArgument<std::string>(0);
         UIWidgets::Tooltip(text.c_str());
         method->success();
     }, "UIWidgets");
-    GameBridge::Instance->BindFunction("Spacer", [](MethodCall *method) {
+    GameBridge::Instance->BindFunction("Spacer", [](uintptr_t ctx, MethodCall* method) {
         auto height = method->GetArgument<float>(0);
         UIWidgets::Spacer(height);
         method->success();
@@ -39,7 +39,7 @@ void BindUIWidgets(){
 }
 
 void BindSohImgui(){
-    GameBridge::Instance->BindFunction("AddWindow", [](MethodCall *method) {
+    GameBridge::Instance->BindFunction("AddWindow", [](uintptr_t ctx, MethodCall* method) {
         auto category = method->GetArgument<std::string>(0);
         auto name = method->GetArgument<std::string>(1);
         auto callback = method->GetArgument<HostFunction*>(2);

@@ -35,12 +35,49 @@ static const luaL_Reg mLuaLibs[] = {
     { nullptr, nullptr }
 };
 
+struct EmptyTable {};
+
 bool LuaHost::Initialize() {
+    FunctionPtr call = [](uintptr_t ctx, MethodCall* method) {
+        auto _module = method->GetArgument<std::string>(0);
+        auto state = (lua_State*) ctx;
+
+        if (!mLuaBindings.contains(_module)){
+            method->error("Module not found");
+            return;
+        }
+
+        auto& functions = mLuaBindings[_module];
+
+        luaL_checkversion(state);
+        lua_createtable(state, 0, (int) (functions.size() - 1));
+
+        for (auto& func : functions) {
+
+            LuaBinding& binding = func.second;
+
+            if(binding.index() == 0){
+                lua_pushlightuserdata(state, method->GetHost());
+                lua_pushlightuserdata(state, &((LuaHost*)method->GetHost())->mBindings[func.first]);
+                lua_pushcclosure(state, std::get<LuaFunction>(binding), 2);
+            } else {
+                auto value = std::get<std::any>(binding);
+                LuaHost::PushIntoLua((uintptr_t) state, value);
+            }
+
+            lua_setfield(state, -2, func.first.c_str());
+        }
+
+        lua_setglobal(state, _module.c_str());
+
+        method->success();
+    };
+    this->Bind("import", { BindingType::KFunction, call, std::monostate() });
     return true;
 }
 
-void LuaHost::PushIntoLua(uintptr_t context, const std::any& value){
-    auto* state = (lua_State*) context;
+void LuaHost::PushIntoLua(uintptr_t context, const std::any& value) {
+    auto *state = (lua_State *) context;
 
     if (IS_TYPE(std::string, value)) {
         lua_pushstring(state, std::any_cast<std::string>(value).c_str());
@@ -55,13 +92,15 @@ void LuaHost::PushIntoLua(uintptr_t context, const std::any& value){
     } else if (IS_TYPE(std::vector<std::any>, value)) {
         lua_newtable(state);
         int index = 1;
-        for (auto& item : std::any_cast<std::vector<std::any>>(value)) {
+        for (auto &item: std::any_cast<std::vector<std::any>>(value)) {
             printf("Pushing into lua: %s\n", item.type().name());
             PushIntoLua(context, item);
             lua_rawseti(state, -2, index++);
         }
     } else if (IS_TYPE(std::monostate, value) || IS_TYPE(nullptr, value)) {
         lua_pushnil(state);
+    } else if (IS_TYPE(EmptyTable, value)) {
+        // This is a workaround for the import function
     } else {
         throw HostAPIException("Unknown type" + std::string(value.type().name()));
     }
@@ -76,7 +115,7 @@ void LuaHost::Bind(std::string name, GameBinding binding) {
 
             auto* result = new MethodCall(api, (uintptr_t) state);
             auto execute = std::get<FunctionPtr>(binding->binding);
-            execute(result);
+            execute((uintptr_t) state, result);
 
             std::vector<std::any> results = result->result();
 
@@ -165,38 +204,20 @@ uint16_t LuaHost::Execute(const std::string& script) {
         lua_call(state, 1, 0);
     }
 
-    for (auto& [mod, functions] : mLuaBindings) {
+    for (auto& func : mLuaBindings[std::monostate()]) {
 
-        bool isModule = mod.index() == 0;
+        LuaBinding binding = func.second;
 
-        if(isModule){
-            luaL_checkversion(state);
-            lua_createtable(state, 0, (int) (functions.size() - 1));
+        if(binding.index() == 0){
+            lua_pushlightuserdata(state, this);
+            lua_pushlightuserdata(state, &this->mBindings[func.first]);
+            lua_pushcclosure(state, std::get<LuaFunction>(binding), 2);
+        } else {
+            auto value = std::get<std::any>(binding);
+            LuaHost::PushIntoLua((uintptr_t) state, value);
         }
 
-        for (auto& func : functions) {
-
-            LuaBinding binding = func.second;
-
-            if(binding.index() == 0){
-                lua_pushlightuserdata(state, this);
-                lua_pushlightuserdata(state, &this->mBindings[func.first]);
-                lua_pushcclosure(state, std::get<LuaFunction>(binding), 2);
-            } else {
-                auto value = std::get<std::any>(binding);
-                LuaHost::PushIntoLua((uintptr_t) state, value);
-            }
-
-            if(isModule) {
-                lua_setfield(state, -2, func.first.c_str());
-            } else {
-                lua_setglobal(state, func.first.c_str());
-            }
-        }
-
-        if(isModule){
-            lua_setglobal(state, std::get<std::string>(mod).c_str());
-        }
+        lua_setglobal(state, func.first.c_str());
     }
 
     luaL_dostring(state, tryCatchImpl);

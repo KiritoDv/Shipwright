@@ -37,7 +37,7 @@ void N64Bridge::Initialize() {
     // Push controller modes
     BIND_MODE(kPress) BIND_MODE(kHold) BIND_MODE(kRelease)
 
-    GameBridge::Instance->BindFunction("RawControllerInput", [](MethodCall *method) {
+    GameBridge::Instance->BindFunction("RawControllerInput", [](uintptr_t ctx, MethodCall* method) {
         auto type = (ControllerMode) method->GetArgument<int>(0);
         auto slot = method->GetArgument<int>(1);
         int  buttons = -1;

@@ -60,7 +60,7 @@ static bool KillScript(const std::shared_ptr<Ship::Console>& console, const std:
 
 void GameBridge::Initialize() {
     this->RegisterHost("lua", std::make_shared<LuaHost>());
-    this->BindFunction("print", [](MethodCall *method) {
+    this->BindFunction("print", [](uintptr_t ctx, MethodCall* method) {
         size_t count = method->ArgumentCount();
         std::stringstream message;
         for(size_t i = 0; i < count; i++) {
@@ -83,7 +83,7 @@ void GameBridge::Initialize() {
         SohImGui::GetConsole()->SendInfoMessage(message.str().c_str());
         method->success();
     });
-    this->BindFunction("hook", [](MethodCall *method) {
+    this->BindFunction("hook", [](uintptr_t ctx, MethodCall* method) {
         auto hook = method->GetArgument<std::string>(0);
         auto function = method->GetArgument<HostFunction*>(1);
         if(hook == "update"){

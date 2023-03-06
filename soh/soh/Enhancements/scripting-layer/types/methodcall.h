@@ -10,7 +10,7 @@
 
 class MethodCall;
 
-typedef void (*FunctionPtr)(MethodCall*);
+typedef void (*FunctionPtr)(uintptr_t context, MethodCall*);
 
 enum class BindingType {
     KFunction,
@@ -31,6 +31,10 @@ private:
     bool mSuccess = false;
 public:
     explicit MethodCall(HostAPI* host, uintptr_t context) : mHost(host), mContext(context) {}
+
+    HostAPI* GetHost(){
+        return this->mHost;
+    }
 
     template<typename T>
     T GetArgument(int index){
