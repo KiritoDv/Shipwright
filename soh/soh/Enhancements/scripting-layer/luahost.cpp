@@ -72,7 +72,7 @@ bool LuaHost::Initialize() {
 
         method->success();
     };
-    this->Bind("import", { BindingType::KFunction, call, std::monostate() });
+    this->Bind("require", { BindingType::KFunction, call, std::monostate() });
     return true;
 }
 
