@@ -76,7 +76,13 @@ public:
 
     // Game Hooks
     template <typename H> struct RegisteredGameHooks { inline static std::vector<typename H::fn> functions; };
-    template <typename H> void RegisterGameHook(typename H::fn h) { RegisteredGameHooks<H>::functions.push_back(h); }
+    template <typename H> size_t RegisterGameHook(typename H::fn h) {
+        RegisteredGameHooks<H>::functions.push_back(h);
+        return RegisteredGameHooks<H>::functions.size() - 1;
+    }
+    template <typename H> void UnregisterGameHook(size_t index) {
+        RegisteredGameHooks<H>::functions.erase(RegisteredGameHooks<H>::functions.begin() + index);
+    }
     template <typename H, typename... Args> void ExecuteHooks(Args&&... args) {
         for (auto& fn : RegisteredGameHooks<H>::functions) {
             fn(std::forward<Args>(args)...);

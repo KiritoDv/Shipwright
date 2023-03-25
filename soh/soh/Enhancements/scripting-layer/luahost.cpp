@@ -3,8 +3,10 @@
 #include "soh/Enhancements/scripting-layer/types/methodcall.h"
 #include "soh/Enhancements/scripting-layer/types/hostfunction.h"
 
+#include <filesystem>
 #include <unordered_map>
 #include <stdexcept>
+#include <fstream>
 
 extern "C" {
 #include <lua/lua.h>
@@ -38,8 +40,32 @@ static const luaL_Reg mLuaLibs[] = {
 struct EmptyTable {};
 
 bool LuaHost::Initialize() {
+    this->BindRequireOverride();
+    return true;
+}
+
+void LuaHost::BindRequireOverride() {
     FunctionPtr call = [](uintptr_t ctx, MethodCall* method) {
         auto _module = method->GetArgument<std::string>(0);
+
+        // This is a proof of concept, the script external loader should be on the game bridge
+        // and not on the host.
+        if(std::filesystem::exists(_module) && std::filesystem::is_regular_file(_module) && _module.ends_with(".lua")){
+            auto path = std::filesystem::path("scripts") / _module;
+            auto ext = path.extension().string().substr(1);
+
+            if(!std::filesystem::exists(path)) {
+                method->error("File not found");
+                return;
+            }
+
+            std::ifstream file(path);
+            std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            luaL_loadstring((lua_State*) ctx, content.c_str());
+            method->success();
+            return;
+        }
+
         auto state = (lua_State*) ctx;
 
         if (!mLuaBindings.contains(_module)){
@@ -72,8 +98,8 @@ bool LuaHost::Initialize() {
 
         method->success();
     };
+    // TODO: Find a better way to avoid repeating this.
     this->Bind("require", { BindingType::KFunction, call, std::monostate() });
-    return true;
 }
 
 void LuaHost::PushIntoLua(uintptr_t context, const std::any& value) {
@@ -146,6 +172,10 @@ void LuaHost::Call(uintptr_t context, uintptr_t function, const std::vector<std:
 
     auto* state = (lua_State*) context;
     auto func   = (char*) function;
+
+    if (state == nullptr) {
+        throw HostAPIException("Invalid host state, probably closed");
+    }
 
     lua_getglobal(state, func);
 
@@ -237,6 +267,14 @@ void LuaHost::Kill(uint16_t pid) {
     if (pid > mLuaStates.size()) {
         return;
     }
-    lua_close(mLuaStates[pid]);
+
+    lua_State* state = mLuaStates[pid];
+
+    lua_getglobal(state, "onExit");
+    if(lua_isfunction(state, -1)){
+        lua_pcall(state, 0, 0, 0);
+    }
+
+    lua_close(state);
     mLuaStates.erase(mLuaStates.begin() + pid);
 }

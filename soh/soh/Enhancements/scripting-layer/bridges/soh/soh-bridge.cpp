@@ -48,6 +48,11 @@ void BindSohImgui(){
         });
         method->success();
     }, "SohImGui");
+    GameBridge::Instance->BindFunction("RemoveWindow", [](uintptr_t ctx, MethodCall* method) {
+        auto name = method->GetArgument<std::string>(0);
+        SohImGui::RemoveWindow(name);
+        method->success();
+    }, "SohImGui");
 }
 
 void SOHBridge::Initialize() {

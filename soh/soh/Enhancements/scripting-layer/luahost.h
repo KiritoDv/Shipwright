@@ -17,4 +17,6 @@ public:
 
     // LuaHost specific methods
     static void PushIntoLua(uintptr_t state, const std::any& value);
+
+    void BindRequireOverride();
 };

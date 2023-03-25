@@ -64,7 +64,6 @@ void GameBridge::Initialize() {
         size_t count = method->ArgumentCount();
         std::stringstream message;
         for(size_t i = 0; i < count; i++) {
-            message << " ";
             std::any value = method->RawArgument(i);
             if (IS_TYPE(std::string, value)) {
                 message << std::any_cast<std::string>(value);
@@ -77,26 +76,47 @@ void GameBridge::Initialize() {
             } else if (IS_TYPE(std::monostate, value) || IS_TYPE(nullptr, value)) {
                 message << "null";
             } else {
-                message << "unknown[" << value.type().name() << "]";
+                message << "[" << value.type().name() << "]";
+            }
+            if(i < count - 1){
+                message << " ";
             }
         }
         SohImGui::GetConsole()->SendInfoMessage(message.str().c_str());
         method->success();
     });
+    // TODO: Find a way to automatically bind all hooks
     this->BindFunction("hook", [](uintptr_t ctx, MethodCall* method) {
-        auto hook = method->GetArgument<std::string>(0);
-        auto function = method->GetArgument<HostFunction*>(1);
-        if(hook == "update"){
-            GameInteractor::Instance->RegisterGameHook<GameInteractor::OnGameFrameUpdate>([function]() {
-               try {
-                    function->execute();
-                } catch (HostAPIException& e) {
-                    SohImGui::GetConsole()->SendErrorMessage("Error while executing script: %s", e.what());
-                }
-            });
+        auto mode = method->GetArgument<std::string>(0);
+        auto hook = method->GetArgument<std::string>(1);
+        if(mode == "add"){
+            auto function = method->GetArgument<HostFunction*>(2);
+            if(hook == "update"){
+                size_t idx = GameInteractor::Instance->RegisterGameHook<GameInteractor::OnGameFrameUpdate>([function]() {
+                    try {
+                        function->execute();
+                    } catch (HostAPIException& e) {
+                        SohImGui::GetConsole()->SendErrorMessage("Error while executing script: %s", e.what());
+                    }
+                });
+                method->success((int) idx);
+                return;
+            }
+            method->error("Unknown hook: " + hook);
+            return;
         }
-        method->success();
-    }, "game");
+        if(mode == "remove"){
+            auto idx = method->GetArgument<int>(2);
+            if(hook == "update"){
+                GameInteractor::Instance->UnregisterGameHook<GameInteractor::OnGameFrameUpdate>(idx);
+                method->success();
+                return;
+            }
+            method->error("Unknown hook: " + hook);
+            return;
+        }
+        method->error("Unknown mode: " + mode);
+    }, "Game");
     SohImGui::GetConsole()->AddCommand("run", { RunScript, "Tries to execute an script", {
         { "path", Ship::ArgumentType::TEXT, true }
     }});
