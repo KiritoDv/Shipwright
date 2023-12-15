@@ -4,6 +4,9 @@
 #include "types/methodcall.h"
 #include <unordered_map>
 #include <string>
+#include <memory>
+#include <variant>
+#include <vector>
 
 #define BIND_FUNCTION(name, ptr) NamedEntry { name, (FunctionPtr)ptr }
 #define BIND_FIELD(name, field) NamedEntry { name, field }

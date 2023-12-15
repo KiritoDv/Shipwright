@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <unordered_map>
 #include <fstream>
+#include <optional>
 
 extern "C" {
 // Fixed dumb error because switch seems to not have limits.h
