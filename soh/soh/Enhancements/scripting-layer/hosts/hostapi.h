@@ -2,6 +2,8 @@
 
 #include <any>
 #include <vector>
+#include <cstdint>
+#include <string>
 
 struct GameBinding;
 
