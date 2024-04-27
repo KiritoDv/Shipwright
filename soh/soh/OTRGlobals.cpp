@@ -1,4 +1,4 @@
-﻿#include "OTRGlobals.h"
+#include "OTRGlobals.h"
 #include "OTRAudio.h"
 #include <iostream>
 #include <algorithm>
@@ -1106,7 +1106,7 @@ extern "C" void InitOTR() {
     SohGui::SetupGuiElements();
     AudioCollection::Instance = new AudioCollection();
     ActorDB::Instance = new ActorDB();
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(__IOS__)
     SpeechSynthesizer::Instance = new DarwinSpeechSynthesizer();
     SpeechSynthesizer::Instance->Init();
 #elif defined(_WIN32)

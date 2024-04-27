@@ -619,9 +619,9 @@ bool Extractor::CallZapd(std::string installPath, std::string exportdir) {
     // Show extraction in background message until linux/mac can have visual progress
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Extracting", "Extraction will now begin in the background.\n\nPlease be patient for the process to finish. Do not close the main program.", nullptr);
 #endif
-
+#ifndef __IOS__
     zapd_main(argc, (char**)argv.data());
-
+#endif
 #ifdef _WIN32
     // Hide the command window again.
     ShowWindow(cmdWindow, SW_HIDE);

@@ -8,6 +8,7 @@
 #include <soh/Enhancements/bootcommands.h>
 #include "soh/OTRGlobals.h"
 
+#include <SDL_main.h>
 #include <libultraship/bridge.h>
 #include "soh/CrashHandlerExp.h"
 
