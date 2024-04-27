@@ -123,7 +123,13 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
     get_property(IOS_TOOLCHAIN_FILE GLOBAL PROPERTY IOS_TOOLCHAIN_FILE)
     include(${IOS_TOOLCHAIN_FILE})
     set(BUNDLE_ID "dev.hm64.soh")
-    set(SIGN_LIBRARY ON)
+    set(SIGN_LIBRARY OFF)
+    if(NOT SIGN_LIBRARY)
+        set_target_properties(soh PROPERTIES
+            XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ""
+            XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "NO"
+        )
+    endif()
 endif()
 
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
