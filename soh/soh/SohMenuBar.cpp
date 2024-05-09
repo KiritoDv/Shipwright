@@ -281,7 +281,7 @@ void DrawSettingsMenu() {
                                "Lower values may improve performance.\n"
                                "Values above 100% can be used for super-sampling, as an intensive but highly effective form of anti-aliasing.\n\n"
                                "Default: 100%");
-            
+
             if (mAdvancedResolutionSettingsWindow) {
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(12.0f, 6.0f));
                 ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.0f));
@@ -397,7 +397,7 @@ void DrawSettingsMenu() {
                         "Uses Matrix Interpolation to create extra frames, resulting in smoother graphics.\n"
                         "This is purely visual and does not impact game logic, execution of glitches etc.\n"
                         "Higher frame rate settings may impact CPU performance."
-                        "\n\n " ICON_FA_INFO_CIRCLE 
+                        "\n\n " ICON_FA_INFO_CIRCLE
                         " There is no need to set this above your monitor's refresh rate. Doing so will waste resources and may give a worse result.");
                 } else {
                     UIWidgets::Tooltip(
@@ -442,7 +442,7 @@ void DrawSettingsMenu() {
             UIWidgets::Tooltip("Changes the scaling of the ImGui menu elements.");
 
             UIWidgets::PaddedSeparator(true, true, 3.0f, 3.0f);
-            
+
             static std::unordered_map<Ship::WindowBackend, const char*> windowBackendNames = {
                 { Ship::WindowBackend::DX11, "DirectX" },
                 { Ship::WindowBackend::SDL_OPENGL, "OpenGL"},
@@ -524,9 +524,9 @@ void DrawSettingsMenu() {
             }
             ImGui::EndMenu();
         }
-        
+
         UIWidgets::Spacer(0);
-        
+
         if (ImGui::BeginMenu("Accessibility")) {
         #if defined(_WIN32) || defined(__APPLE__)
             UIWidgets::PaddedEnhancementCheckbox("Text to Speech", CVAR_SETTING("A11yTTS"));
@@ -534,7 +534,7 @@ void DrawSettingsMenu() {
         #endif
             UIWidgets::PaddedEnhancementCheckbox("Disable Idle Camera Re-Centering", CVAR_SETTING("A11yDisableIdleCam"));
             UIWidgets::Tooltip("Disables the automatic re-centering of the camera when idle.");
-            
+
             ImGui::EndMenu();
         }
         ImGui::EndMenu();
@@ -597,7 +597,7 @@ void DrawEnhancementsMenu() {
                 UIWidgets::Spacer(0);
                 ImGui::Text("Changes:");
                 UIWidgets::PaddedSeparator();
-                
+
                 UIWidgets::PaddedEnhancementSliderInt("Biggoron Forge Time: %d days", "##FORGETIME", CVAR_ENHANCEMENT("ForgeTime"), 0, 3, "", 3, true, false, true);
                 UIWidgets::Tooltip("Allows you to change the number of days it takes for Biggoron to forge the Biggoron Sword");
                 UIWidgets::PaddedEnhancementCheckbox("Remember Save Location", CVAR_ENHANCEMENT("RememberSaveLocation"), false, false);
@@ -660,7 +660,7 @@ void DrawEnhancementsMenu() {
                     "- Not within range of Ocarina playing spots");
                 UIWidgets::PaddedEnhancementCheckbox("Pause Warp", CVAR_ENHANCEMENT("PauseWarp"), true, false);
                 UIWidgets::Tooltip("Selection of warp song in pause menu initiates warp. Disables song playback.");
-                
+
                 ImGui::EndTable();
                 ImGui::EndMenu();
             }
@@ -1031,7 +1031,7 @@ void DrawEnhancementsMenu() {
                 OTRGlobals::Instance->gRandomizer->GetRandoSettingValue(RSK_BLUE_FIRE_ARROWS);
             static const char* forceEnableBlueFireArrowsText =
                 "This setting is forcefully enabled because a savefile\nwith \"Blue Fire Arrows\" is loaded.";
-            UIWidgets::PaddedEnhancementCheckbox("Blue Fire Arrows", CVAR_ENHANCEMENT("BlueFireArrows"), true, false, 
+            UIWidgets::PaddedEnhancementCheckbox("Blue Fire Arrows", CVAR_ENHANCEMENT("BlueFireArrows"), true, false,
                 forceEnableBlueFireArrows, forceEnableBlueFireArrowsText, UIWidgets::CheckboxGraphics::Checkmark);
             UIWidgets::Tooltip("Allows Ice Arrows to melt red ice.\nMay require a room reload if toggled during gameplay.");
 
@@ -1040,7 +1040,7 @@ void DrawEnhancementsMenu() {
                 OTRGlobals::Instance->gRandomizer->GetRandoSettingValue(RSK_SUNLIGHT_ARROWS);
             static const char* forceEnableSunLightArrowsText =
                 "This setting is forcefully enabled because a savefile\nwith \"Sunlight Arrows\" is loaded.";
-            UIWidgets::PaddedEnhancementCheckbox("Sunlight Arrows", CVAR_ENHANCEMENT("SunlightArrows"), true, false, 
+            UIWidgets::PaddedEnhancementCheckbox("Sunlight Arrows", CVAR_ENHANCEMENT("SunlightArrows"), true, false,
                 forceEnableSunLightArrows, forceEnableSunLightArrowsText, UIWidgets::CheckboxGraphics::Checkmark);
             UIWidgets::Tooltip("Allows Light Arrows to activate sun switches.\nMay require a room reload if toggled during gameplay.");
 
@@ -1240,8 +1240,8 @@ void DrawEnhancementsMenu() {
                                 "Fixes an incorrect calculation that acted like water underneath ground was above it.");
             UIWidgets::PaddedEnhancementCheckbox("Fix Bush Item Drops", CVAR_ENHANCEMENT("BushDropFix"), true, false);
             UIWidgets::Tooltip("Fixes the bushes to drop items correctly rather than spawning undefined items.");
-            UIWidgets::PaddedEnhancementCheckbox("Fix falling from vine edges", CVAR_ENHANCEMENT("FixVineFall"), true, false); 
-            UIWidgets::Tooltip("Prevents immediately falling off climbable surfaces if climbing on the edges."); 
+            UIWidgets::PaddedEnhancementCheckbox("Fix falling from vine edges", CVAR_ENHANCEMENT("FixVineFall"), true, false);
+            UIWidgets::Tooltip("Prevents immediately falling off climbable surfaces if climbing on the edges.");
             UIWidgets::PaddedEnhancementCheckbox("Fix Link's eyes open while sleeping", CVAR_ENHANCEMENT("FixEyesOpenWhileSleeping"), true, false);
             UIWidgets::Tooltip("Fixes Link's eyes being open in the opening cutscene when he is supposed to be sleeping.");
             UIWidgets::PaddedEnhancementCheckbox("Fix Darunia dancing too fast", CVAR_ENHANCEMENT("FixDaruniaDanceSpeed"),
@@ -1468,12 +1468,12 @@ void DrawCheatsMenu() {
         if (ImGui::Button("Change Age")) {
             CVarSetInteger(CVAR_GENERAL("SwitchAge"), 1);
         }
-        UIWidgets::Tooltip("Switches Link's age and reloads the area.");  
+        UIWidgets::Tooltip("Switches Link's age and reloads the area.");
         UIWidgets::Spacer(2.0f);
         if (ImGui::Button("Clear Cutscene Pointer")) {
             GameInteractor::RawAction::ClearCutscenePointer();
         }
-        UIWidgets::Tooltip("Clears the cutscene pointer to a value safe for wrong warps.");   
+        UIWidgets::Tooltip("Clears the cutscene pointer to a value safe for wrong warps.");
 
         ImGui::TableNextColumn();
         UIWidgets::Spacer(2.0f);
@@ -1730,6 +1730,11 @@ void DrawDeveloperToolsMenu() {
             }
         }
 
+        UIWidgets::Spacer(0);
+        if (ImGui::Button(GetWindowButtonText("Cleanup Shader Cache", false).c_str(), ImVec2(-1.0f, 0.0f))) {
+            CVarSetInteger(CVAR_DEVELOPER_TOOLS("CleanupShaderCache"), 1);
+        }
+
         ImGui::PopStyleVar(3);
         ImGui::PopStyleColor(1);
 
@@ -1953,12 +1958,12 @@ void DrawRandomizerMenu() {
                 OTRGlobals::Instance->gRandomizer->GetRandoSettingValue(RSK_BOSS_KEYSANITY) == RO_DUNGEON_ITEM_LOC_ANYWHERE ||
                 (OTRGlobals::Instance->gRandomizer->GetRandoSettingValue(RSK_GANONS_BOSS_KEY) != RO_GANON_BOSS_KEY_VANILLA &&
                     OTRGlobals::Instance->gRandomizer->GetRandoSettingValue(RSK_GANONS_BOSS_KEY) != RO_GANON_BOSS_KEY_OWN_DUNGEON &&
-                    OTRGlobals::Instance->gRandomizer->GetRandoSettingValue(RSK_GANONS_BOSS_KEY) != RO_GANON_BOSS_KEY_STARTWITH) || 
+                    OTRGlobals::Instance->gRandomizer->GetRandoSettingValue(RSK_GANONS_BOSS_KEY) != RO_GANON_BOSS_KEY_STARTWITH) ||
                 !IS_RANDO) {
                 disableKeyColors = false;
             }
 
-            static const char* disableKeyColorsText = 
+            static const char* disableKeyColorsText =
                 "This setting is disabled because a savefile is loaded without any key\n"
                 "shuffle settings set to \"Any Dungeon\", \"Overworld\" or \"Anywhere\"";
 
