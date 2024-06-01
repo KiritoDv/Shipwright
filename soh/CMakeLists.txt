@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
+include(FetchContent)
 
 set(CMAKE_SYSTEM_VERSION 10.0 CACHE STRING "" FORCE)
 
@@ -177,6 +178,7 @@ source_group("soh\\Enhancements\\randomizer\\3drando" REGULAR_EXPRESSION "soh/En
 source_group("soh\\Enhancements\\randomizer\\3drando\\hint_list" REGULAR_EXPRESSION "soh/Enhancements/randomizer/3drando/hint_list/*")
 source_group("soh\\Enhancements\\randomizer\\3drando\\location_access" REGULAR_EXPRESSION "soh/Enhancements/randomizer/3drando/location_access/*")
 source_group("soh\\Enhancements\\speechsynthesizer" REGULAR_EXPRESSION "soh/Enhancements/speechsynthesizer/*")
+source_group("soh\\Enhancements\\scripting-layer" REGULAR_EXPRESSION "soh/Enhancements/scripting-layer/*")
 source_group("soh\\Enhancements\\tts" REGULAR_EXPRESSION "soh/Enhancements/tts/*")
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -318,7 +320,6 @@ endif()
 ################################################################################
 # Find/download Boost
 ################################################################################
-include(FetchContent)
 FetchContent_Declare(
     Boost
     URL      https://archives.boost.io/release/1.81.0/source/boost_1_81_0.tar.gz
@@ -665,8 +666,25 @@ endif()
 ################################################################################
 # Dependencies
 ################################################################################
+
+FetchContent_Declare(
+    lua
+    GIT_REPOSITORY https://github.com/lua/lua
+    GIT_TAG        814213b65fa4ab2b1a7216d06f68a6f3df89efcd
+)
+FetchContent_MakeAvailable(lua)
+add_library(lua STATIC)
+file(GLOB lua_src ${FETCHCONTENT_BASE_DIR}/lua-src
+    "${FETCHCONTENT_BASE_DIR}/lua-src/*.c"
+)
+list(REMOVE_ITEM lua_src "${FETCHCONTENT_BASE_DIR}/lua-src/onelua.c")
+list(REMOVE_ITEM lua_src "${FETCHCONTENT_BASE_DIR}/lua-src/lua.c")
+list(REMOVE_ITEM lua_src "${FETCHCONTENT_BASE_DIR}/lua-src/ltests.c")
+target_sources(lua PRIVATE ${lua_src})
+target_include_directories(${PROJECT_NAME} PRIVATE ${FETCHCONTENT_BASE_DIR}/lua-src)
+
 add_dependencies(${PROJECT_NAME}
-    libultraship
+    libultraship lua
 )
 if(NOT CMAKE_SYSTEM_NAME MATCHES "NintendoSwitch|CafeOS")
 add_dependencies(${PROJECT_NAME}
@@ -681,6 +699,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			"libultraship;"
 			"ZAPDLib;"
 			"glu32;"
+            "lua;"
 			"SDL2::SDL2;"
 			"SDL2::SDL2main;"
             "$<$<BOOL:${BUILD_REMOTE_CONTROL}>:SDL2_net::SDL2_net-static>"
@@ -695,6 +714,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 			"libultraship;"
 			"ZAPDLib;"
 			"glu32;"
+            "lua;"
 			"SDL2::SDL2;"
 			"SDL2::SDL2main;"
 			"glfw;"
@@ -710,6 +730,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "NintendoSwitch")
     find_package(Threads REQUIRED)
     set(ADDITIONAL_LIBRARY_DEPENDENCIES
         "libultraship;"
+        "lua;"
         SDL2::SDL2
         -lglad
         Threads::Threads
@@ -718,6 +739,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "CafeOS")
     find_package(SDL2 REQUIRED)
     set(ADDITIONAL_LIBRARY_DEPENDENCIES
         "libultraship;"
+        "lua;"
         SDL2::SDL2-static
 
         "$<$<CONFIG:Debug>:-Wl,--wrap=abort>"
@@ -731,6 +753,7 @@ else()
     find_package(Threads REQUIRED)
  	set(ADDITIONAL_LIBRARY_DEPENDENCIES
         "libultraship;"
+        "lua;"
 		"ZAPDLib;"
 		SDL2::SDL2
         "$<$<BOOL:${BUILD_REMOTE_CONTROL}>:SDL2_net::SDL2_net>"
